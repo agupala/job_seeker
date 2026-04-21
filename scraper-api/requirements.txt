@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+python-jobspy
+pandas
+pydantic
+python-dotenv
+anthropic

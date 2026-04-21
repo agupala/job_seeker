@@ -1,0 +1,15 @@
+.git
+.gitignore
+.env
+.env.example
+README.md
+docker-compose.yml
+n8n/
+postgres/
+career-ops-official/
+__pycache__/
+*.log
+.cv/
+perfil_candidato.md
+.cv/
+backups/
