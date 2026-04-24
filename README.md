@@ -1,4 +1,4 @@
-# 🚀 Data Scientist Job Seeker Ecosystem 
+# 🚀 Data Scientist Job Seeker Ecosystem
 
 Este proyecto es tu centro de comando personal para automatizar la búsqueda de empleo orientado a data scientists. Utiliza una arquitectura modular para rastrear vacantes, analizarlas con Inteligencia Artificial (Gemini) y notificarte solo cuando hay un match real con tu perfil.
 
@@ -166,4 +166,3 @@ docker-compose run --rm scraper pytest -q
 
 Los tests son intencionalmente ligeros y usan `monkeypatch` para evitar llamadas reales
 de red; están pensados como base para ampliar la cobertura más adelante.
-
