@@ -5,3 +5,5 @@ pandas
 pydantic
 python-dotenv
 anthropic
+pytest
+pytest-mock

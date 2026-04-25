@@ -14,6 +14,12 @@ Este proyecto es tu centro de comando personal para automatizar la búsqueda de 
 
 ---
 
+## Modelo Gemini (configuración)
+
+- **Modelo configurado:** `gemini-2.5-flash-lite` (vía n8n).
+- **Plan recomendado:** Se recomienda fuertemente utilizar una **API Key de nivel pago (Pay-as-you-go)**. 
+  - *Razón:* Los niveles gratuitos suelen tener límites muy estrictos de transacciones por minuto (TPM). Para un scraping de 20-50 vacantes, el nivel gratuito podría bloquearse por "Rate Limit", mientras que el nivel pago procesa todo en segundos.
+
 ## 📂 Estructura del Proyecto
 
 - **`/scraper-api`**: Servicio Python que utiliza `JobSpy` para extraer ofertas de LinkedIn, Indeed y Google Jobs.
@@ -27,22 +33,29 @@ Este proyecto es tu centro de comando personal para automatizar la búsqueda de 
 ## 🏃 Inicio Rápido
 
 1. **Configurar Variables de Entorno**:
-   Copia el archivo de ejemplo y completa tus credenciales (especialmente `GEMINI_API_KEY`):
+   - Copia el archivo de ejemplo y edítalo con tus credenciales:
 
    ```bash
    cp .env.example .env
    ```
 
+   - Variables importantes (definidas en `.env.example`):
+     - `POSTGRES_USER` — usuario de la base de datos (ej: `n8n_user`).
+     - `POSTGRES_DB` — nombre de la base de datos (ej: `job_seeker_db`).
+     - `DB_PASSWORD` — contraseña que usará Postgres internamente.
+     - `GEMINI_API_KEY` — clave de acceso para Gemini (obligatoria si usás el filtro IA).
+     - `N8N_ENCRYPTION_KEY` — clave para encriptar datos en n8n.
+
 2. **Levantar el Ecosistema**:
 
    ```bash
-   docker-compose up -d --build
+   docker compose up -d --build
    ```
 
 3. **Acceso a Servicios**:
    - **n8n**: [http://localhost:5679](http://localhost:5679) (Importa `n8n/workflow.json` al iniciar).
    - **Scraper API**: [http://localhost:8000/docs](http://localhost:8000/docs).
-   - **Base de Datos**: Puerto `5434` (mapeado desde el 5432 interno).
+   - **Base de Datos**: Accesible en `localhost:5434` (mapeado al puerto interno `5432`).
 
 ---
 
@@ -159,9 +172,9 @@ pytest -q
 O dentro del contenedor (recomendado para reproducibilidad):
 
 ```bash
-docker-compose exec scraper pytest -q
+docker compose exec scraper pytest -q
 # o si preferís un contenedor efímero
-docker-compose run --rm scraper pytest -q
+docker compose run --rm scraper pytest -q
 ```
 
 Los tests son intencionalmente ligeros y usan `monkeypatch` para evitar llamadas reales
