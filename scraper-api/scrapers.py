@@ -14,7 +14,7 @@ from typing import List, Dict, Any
 from jobspy import scrape_jobs
 import logging
 
-from .config import GENERAL_SITES, ATS_PATTERNS, ENERGY_COMPANIES, ENERGY_JOB_TITLES, COLUMNS
+from config import GENERAL_SITES, ATS_PATTERNS, ENERGY_COMPANIES, ENERGY_JOB_TITLES, COLUMNS
 
 logger = logging.getLogger("scraper")
 

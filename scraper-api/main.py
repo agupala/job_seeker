@@ -2,7 +2,7 @@ import logging
 from fastapi import FastAPI, Query
 from typing import List, Dict, Any
 
-from .scrapers import JobScraperFactory, deduplicate_jobs
+from scrapers import JobScraperFactory, deduplicate_jobs
 
 
 logging.basicConfig(
