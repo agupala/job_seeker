@@ -10,23 +10,18 @@ CONFIG_PY = ROOT / "config.py"
 
 
 def load_package_modules():
-    """Carga `scraper_api.config` y `scraper_api.scrapers` desde archivos.
-
-    Usamos nombres de paquete ficticios (`scraper_api.*`) para que los
-    imports relativos dentro de `scrapers.py` funcionen durante las pruebas.
-    """
-    # cargar config
-    spec_cfg = spec_from_file_location("scraper_api.config", str(CONFIG_PY))
-    cfg = module_from_spec(spec_cfg)
-    sys.modules[spec_cfg.name] = cfg
-    spec_cfg.loader.exec_module(cfg)
-
-    # cargar scrapers (usa imports relativos a `scraper_api`)
-    spec_scr = spec_from_file_location("scraper_api.scrapers", str(SCRAPERS_PY))
-    scr = module_from_spec(spec_scr)
-    sys.modules[spec_scr.name] = scr
-    spec_scr.loader.exec_module(scr)
-
+    """Carga `config` y `scrapers` agregando el directorio raíz al path."""
+    if str(ROOT) not in sys.path:
+        sys.path.append(str(ROOT))
+    
+    import config as cfg
+    import scrapers as scr
+    
+    # Recargar para asegurar que tenemos la versión más reciente si se corre en el mismo proceso
+    import importlib
+    importlib.reload(cfg)
+    importlib.reload(scr)
+    
     return scr, cfg
 
 
