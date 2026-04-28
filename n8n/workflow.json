@@ -1,6 +1,6 @@
 [
   {
-    "updatedAt": "2026-04-28T04:05:14.949Z",
+    "updatedAt": "2026-04-28T04:38:17.158Z",
     "createdAt": "2026-04-19T23:17:38.999Z",
     "id": "VPo3TTMDssh681uj",
     "name": "Job Seeker",
@@ -605,7 +605,7 @@
               {
                 "id": "e7259aff-abf8-48be-8b29-e721dea65c20",
                 "name": "prompt",
-                "value": "=Sos un Senior Technical Recruiter especializado en Data Science, ML e Ingeniería de Datos.  PERFIL DEL CANDIDATO: - Formación: Ing. en Sistemas + Diplomatura en Inteligencia de Datos - Experiencia: ~3 años en datos/ML   · ML Developer en empresa de e-commerce líder LATAM (2.5 años): modelos predictivos, Python, Pandas, Pytorch, BigQuery, ETL/EDA, pipelines   · Data Engineer Ssr en fintech de seguros (actual): pipelines, SQL, n8n, LLM, Dagster - STACK: Python (Pandas), SQL, BigQuery, Dagster, PostgreSQL, Docker, AWS (S3), Git, FastAPI - ML: modelado predictivo, tuning, EDA - Inglés: B1 (lee docs técnicos, conversacional, ) - Seniority: Ssr (2-3 años exp requeridos)  ROLES TARGET: Data Scientist, ML Engineer, Data Engineer con ML/Analytics, MLOps/LLMOps, Analytics Engineer  VACANTE: Título: {{ $json.title }} Empresa: {{ $json.company }} Ubicación: {{ $json.location }} URL: {{ $json.job_url }} Descripción: {{ $json.description }}  SCORING: - 5: fit total, Python+SQL+cloud, sin inglés avanzado obligatorio - 4: buen fit, gap menor salvable - 3: fit parcial, gaps importantes - 2: seniority incorrecto o perfil alejado - 1: DESCARTAR → stack C#/Java/.Net/PHP, rol Jr puro, Lead/Staff/VP/Manager sin técnico, +6 años excluyente, inglés fluido excluyente  PENALIZACIONES: - Inglés fluido excluyente → -2 - C#/Java/.Net/PHP como stack principal → score 1 - Airflow excluyente (el candidato usa Dagster) → -1 - Lead/Staff/Principal/Manager/VP → score 1-2 - +5 años mínimo excluyente → score 1-2 - Si el título del puesto es 'Software Engineer' o 'Backend' a secas, y no menciona Data/ML en el mismo, el score debe ser bajo, independientemente de que use Python.  BONIFICACIONES: Python+SQL+cloud (+1), pipelines/ETL/Dagster (+1), ML en producción (+1), Docker/AWS (+0.5), remoto/híbrido CABA (+0.5)  Respondé ÚNICAMENTE con JSON válido, sin backticks: {   \"ai_score\": <1-5>,   \"title\": \"<título>\",   \"company\": \"<empresa>\",   \"job_url\": \"<URL>\",   \"summary\": \"<justificación 2-3 oraciones>\",   \"fit_highlights\": [\"<fortaleza 1>\", \"<fortaleza 2>\"],   \"red_flags\": [\"<gap concreto 1>\", \"<gap concreto 2>\"] }",
+                "value": "=Sos un Senior Technical Recruiter especializado en Data Science, ML e Ingeniería de Datos.\n\n---\n\nPERFIL DEL CANDIDATO:\n- Formación: Ing. en Sistemas + Diplomatura en Inteligencia de Datos\n- Experiencia: ~3 años en datos/ML\n  · ML Developer en empresa de e-commerce líder LATAM (2.5 años): modelos predictivos, Python, Pandas, Pytorch, BigQuery, ETL/EDA, pipelines\n  · Data Engineer Ssr en fintech de seguros (actual): pipelines, SQL, n8n, LLM, Dagster\n- STACK: Python (Pandas), SQL, BigQuery, Dagster, PostgreSQL, Docker, AWS (S3), Git, FastAPI\n- ML: modelado predictivo, tuning, EDA\n- Inglés: B1 (lee docs técnicos, conversacional)\n- Seniority: Ssr (2-3 años exp requeridos)\n\n---\n\nROLES TARGET: \nData Scientist, ML Engineer, Data Engineer con ML/Analytics, MLOps/LLMOps, Analytics Engineer\n\n---\n\nVACANTE:\nTítulo: {{ $json.title }}\nEmpresa: {{ $json.company }}\nUbicación: {{ $json.location }}\nURL: {{ $json.job_url }}\nDescripción: {{ $json.description }}\n\n---\n\nSCORING:\n- 5: Fit total, Python+SQL+Cloud, sin inglés avanzado obligatorio.\n- 4: Buen fit, gap menor salvable.\n- 3: Fit parcial, gaps importantes.\n- 2: Seniority incorrecto o perfil alejado.\n- 1: DESCARTAR → Stack incompatible (C#/Java/.Net/PHP), rol Jr puro, Lead/Staff/VP/Manager, REQUERIMIENTO DE 4 AÑOS O MÁS DE EXPERIENCIA, o inglés fluido excluyente.\n\n---\n\nPENALIZACIONES:\n- Requiere 4 años o más de experiencia → Score 1 (DESCARTE OBLIGATORIO)\n- Lead/Staff/Principal/Manager/VP → Score 1\n- +4 años mínimo excluyente → Score 1\n- Inglés fluido excluyente → -2\n- C#/Java/.Net/PHP como stack principal → Score 1\n- Airflow excluyente (el candidato usa Dagster) → -1\n- Título 'Software Engineer' o 'Backend' a secas (sin mencionar Data/ML) → El score debe ser bajo (1-2), independientemente de que use Python.\n\n---\n\nBONIFICACIONES:\n- Python+SQL+Cloud (+1)\n- Pipelines/ETL/Dagster (+1)\n- ML en producción (+1)\n- Docker/AWS (+0.5)\n- Remoto/Híbrido CABA (+0.5)\n\n---\n\nRESPUESTA (ÚNICAMENTE JSON VÁLIDO, SIN BACKTICKS):\n{\n  \"ai_score\": <1-5>,\n  \"title\": \"<título>\",\n  \"company\": \"<empresa>\",\n  \"job_url\": \"<URL>\",\n  \"summary\": \"<justificación 2-3 oraciones>\",\n  \"fit_highlights\": [\"<fortaleza 1>\", \"<fortaleza 2>\"],\n  \"red_flags\": [\"<gap concreto 1>\", \"<gap concreto 2>\"]\n}\n",
                 "type": "string"
               }
             ]
@@ -1544,9 +1544,9 @@
         }
       ]
     },
-    "versionId": "9846cb3e-a03d-4f94-a06a-f77ff767f4dc",
+    "versionId": "ccbcbdd2-0de9-4fac-b1d0-cd6ba16abf44",
     "activeVersionId": null,
-    "versionCounter": 1106,
+    "versionCounter": 1110,
     "triggerCount": 0,
     "tags": [
       {
