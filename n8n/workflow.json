@@ -1,6 +1,6 @@
 [
   {
-    "updatedAt": "2026-04-25T02:21:13.193Z",
+    "updatedAt": "2026-04-28T04:05:14.949Z",
     "createdAt": "2026-04-19T23:17:38.999Z",
     "id": "VPo3TTMDssh681uj",
     "name": "Job Seeker",
@@ -10,7 +10,7 @@
     "nodes": [
       {
         "parameters": {
-          "url": "http://scraper:8000/scrape?days_old=3",
+          "url": "http://scraper:8000/scrape?days_old=1",
           "options": {}
         },
         "id": "3652e01e-dea0-4cee-b5b2-cba6c935d737",
@@ -243,8 +243,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          -6032,
-          25120
+          -6048,
+          24992
         ],
         "id": "79c71f1d-7c43-4c36-9c44-7bf0552cbf9e",
         "name": "Actualizar empleo",
@@ -620,6 +620,19 @@
         ],
         "id": "feba7c8f-ce28-4c26-8ace-7e097b3ca27e",
         "name": "Prompt"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Intenta con global.setTimeout si setTimeout falla\nawait new Promise(resolve => global.setTimeout(resolve, 1000));\nreturn $input.all();\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -6112,
+          25312
+        ],
+        "id": "d754be33-67a0-440c-94cc-26cc9e7245dd",
+        "name": "Delay 1 segundo"
       }
     ],
     "connections": {
@@ -671,7 +684,7 @@
         "main": [
           [
             {
-              "node": "Loop",
+              "node": "Delay 1 segundo",
               "type": "main",
               "index": 0
             }
@@ -848,6 +861,17 @@
             }
           ]
         ]
+      },
+      "Delay 1 segundo": {
+        "main": [
+          [
+            {
+              "node": "Loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "settings": {
@@ -858,10 +882,671 @@
     "meta": {
       "templateCredsSetupCompleted": true
     },
-    "pinData": {},
-    "versionId": "11f98136-b488-429b-93e7-0a53d95e90f9",
+    "pinData": {
+      "Scraper API (General)": [
+        {
+          "json": {
+            "results": [
+              {
+                "site": "indeed",
+                "job_url": "https://ar.indeed.com/viewjob?jk=4644edfb98cd33d6",
+                "title": "Software Engineer III - Python Developer",
+                "company": "JPMorganChase",
+                "location": "Buenos Aires, B, AR",
+                "date_posted": "2026-04-27",
+                "description": "**JOB DESCRIPTION**  \n\nWe have an exciting and rewarding opportunity for you to take your software engineering career to the next level.\n\n\nAs a Software Engineer III at JPMorganChase within the Rates LOB, you serve as a seasoned member of an agile team to design and deliver trusted market\\-leading technology products in a secure, stable, and scalable way. You are responsible for carrying out critical technology solutions across multiple technical areas within various business functions in support of the firm’s business objectives.\n\n**Job responsibilities**\n\n* Executes software solutions, design, development, and technical troubleshooting with ability to think beyond routine or conventional approaches to build solutions or break down technical problems\n* Engages with stakeholders and understands business requirements\n* Provides production support for critical services\n* Creates secure and high\\-quality production code and maintains algorithms that run synchronously with appropriate systems\n* Produces architecture and design artifacts for complex applications while being accountable for ensuring design constraints are met by software code development\n* Gathers, analyzes, synthesizes, and develops visualizations and reporting from large, diverse data sets in service of continuous improvement of software applications and systems\n* Proactively identifies hidden problems and patterns in data and uses these insights to drive improvements to coding hygiene and system architecture\n* Contributes to software engineering communities of practice and events that explore new and emerging technologies\n* Adds to team culture of diversity, opportunity, inclusion, and respect\n\n**Required qualifications, capabilities, and skills**\n\n* At least 3 years of experience in similar role\n* Hands\\-on practical experience in system design, application development, testing, and operational stability\n* Solid coding level in Python and experience in leveraging available libraries to dedicated projects.\n* Experience in developing, debugging, and maintaining code in a large corporate environment with one or more modern programming languages and database querying languages\n* Overall knowledge of the Software Development Life Cycle\n* Solid understanding of agile methodologies such as CI/CD, Application Resiliency, and Security\n* Demonstrated knowledge of software applications and technical processes within a technical discipline (e.g., cloud, artificial intelligence, machine learning, mobile, etc.)\n\n\n\n\n**ABOUT US**  \n\n  \n\nJ.P. Morgan is a global leader in financial services, providing strategic advice and products to the world’s most prominent corporations, governments, wealthy individuals and institutional investors. Our first\\-class business in a first\\-class way approach to serving clients drives everything we do. We strive to build trusted, long\\-term partnerships to help our clients achieve their business objectives.  \n\n\nWe recognize that our people are our strength and the diverse talents they bring to our global workforce are directly linked to our success. We are an equal opportunity employer and place a high value on diversity and inclusion at our company. We do not discriminate on the basis of any protected attribute, including race, religion, color, national origin, gender, sexual orientation, gender identity, gender expression, age, marital or veteran status, pregnancy or disability, or any other basis protected under applicable law. We also make reasonable accommodations for applicants’ and employees’ religious practices and beliefs, as well as mental health or physical disability needs. Visit our FAQs for more information about requesting an accommodation.  \n\n  \n\n  \n\n**ABOUT THE TEAM**  \n\n  \n\nJ.P. Morgan’s Commercial \\& Investment Bank is a global leader across banking, markets, securities services and payments. Corporations, governments and institutions throughout the world entrust us with their business in more than 100 countries. The Commercial \\& Investment Bank provides strategic advice, raises capital, manages risk and extends liquidity in markets around the world."
+              },
+              {
+                "site": "indeed",
+                "job_url": "https://ar.indeed.com/viewjob?jk=eb1ee61445e86c6f",
+                "title": "AI Software Engineer",
+                "company": "Citric Sheep Limited",
+                "location": "Desde casa, AR",
+                "date_posted": "2026-04-27",
+                "description": "Citric Sheep is looking for an AI Software Engineer to join our flock.\n\nYou’ll work on cutting\\-edge AI systems involving LLMs, machine learning, computer vision, and Python\\-based applications, contributing to high\\-impact projects across different industries.\n\n**What You'll Do**\n\nYou will collaborate with our 100% remote engineering team to design, build, and maintain AI software systems across the full lifecycle — from prototyping to deployment.\n\nYour work will include:\n\n* Designing and developing scalable Python systems for AI applications\n* Implementing data\\-driven algorithms and ML models\n* Building and optimizing data pipelines and ETL workflows\n* Writing clean, maintainable, production\\-quality code\n\n**Minimum Requirements**\n\n* 3\\+ years of professional Python software development\n* Professional\\-level English\n* Experience with collaborative development tools (GitHub and project management tools)\n\n**Beneficial Skills**\n\n* LLM / ML / AI experience\n* Software architecture and system design\n* PyTorch / TensorFlow / Keras / Pandas / Jupyter\n* SQL / NoSQL / Vector databases\n* Unit testing and testable software design\n* PyCharm / Cursor IDEs\n* Cloud environments\n* CI/CD and containerization\n\n**About Citric Sheep**\n\nSince 2018, Citric Sheep has been building advanced AI systems for clients across multiple industries. We value clean engineering, collaboration, and continuous learning, with a strong focus on high\\-quality code and practical AI solutions.\n\n**Benefits**\n\n* Full\\-time contract\n* 100% remote work\n* Challenging AI projects across multiple industries\n* Access to modern AI technologies\n* Mentorship and collaborative engineering culture\n* Daily learning time and company hackathons\n\n**Hiring Process**\n\n* Screening Meeting\n* Technical Coding Session\n* Company Fit Meeting\n* Reference Call (reference required when applying; contacted only if you reach this stage)\n* Offer Meeting\n\nJob Types: Full\\-time, Permanent\n\nPay: $2,200,000\\.00 \\- $3,500,000\\.00 per month\n\nApplication Question(s):\n\n* Tell us about a technical problem you solved recently that you’re proud of. What made it challenging, and how did you solve it?\n* Professional Reference\n\nPlease provide the contact details for one former direct manager (or supervisor) who worked closely with you and can speak to your coding abilities. We need a name, role, company and email.\n\nNote: We will only contact your reference if you reach the final stage of our hiring process (prior to an offer). We will never contact references earlier in the process.\n\nWork Location: Remote"
+              },
+              {
+                "site": "indeed",
+                "job_url": "https://ar.indeed.com/viewjob?jk=0b1e34a9988ce896",
+                "title": "Junior Marketing Analyst - Comms",
+                "company": "Sezzle",
+                "location": "Desde casa, AR",
+                "date_posted": "2026-04-27",
+                "description": "**About Sezzle:**\n\n\n\nWith a mission to financially empower the next generation, Sezzle is revolutionizing the shopping experience beyond payments, blending cutting\\-edge tech with seamless, interest\\-free installment plans that make shopping smarter and more accessible. We're not just transforming payments; we're redefining how people discover, interact with, and purchase the things they love while driving real impact on merchant sales through increased conversions and higher order values. As we continue to shape the future of fintech and retail, we're building an innovative, dynamic team passionate about creating more than just a transaction but a truly unique shopping journey. If you're excited about pushing boundaries in tech and delivering a game\\-changing experience for consumers and merchants alike, come join us at Sezzle and help create the future of shopping!\n\n\n**About the Role:**\n\n\n\nWe are seeking a talented and motivated Marketing Analyst\\- Commswho is best in class, with a high IQ and a high EQ. This role presents an exciting opportunity to thrive in a dynamic, fast\\-paced environment within a rapidly growing team, with strong prospects for continued growth and increased ownership.\n\n\n\nThe Marketing Analyst \\- Comms, will sit at the intersection of data, CRM strategy, and AI\\-driven efficiency. We're looking for an execution\\-oriented person who owns their work from end\\-to\\-end. You'll dive into the details of how our campaigns operate across email, push, SMS, and in\\-app channels, spot friction and inefficiency, and design smarter ways forward. You'll spend most of your time inside Braze, Sezzle's primary consumer\\-focused CRM and marketing automation platform, building and analyzing campaigns across email, push, SMS, and in\\-app channels. You'll dig into performance data to identify what's working, surface gaps in our consumer journeys, and develop new comms to fill them. You'll also look for every opportunity to apply AI tools to make the team's output faster, sharper, and more scalable.  \n\nThis isn't a role where you wait for assignments. We want someone who can look at a set of data, identify the opportunity, and start building toward it then communicate what they found and why it matters to the team around them.\n\n\n**What You'll Do:**\n\n\n* **CRM Campaign Execution \\& Analysis**\n\n\n\t+ Build, launch, and iterate on campaigns and canvases in Braze across email, push, SMS, and in\\-app channels.\n\t+ Audit existing consumer journeys to identify engagement gaps, drop\\-off points, and missed messaging opportunities.\n\t+ Develop segmentation strategies and personalized comms that improve activation, engagement, and retention.\n\t+ Support A/B test design, execution, and readout — translating results into clear, actionable recommendations.\n\t+ Maintain performance dashboards and reporting frameworks that make campaign data interpretable for the broader marketing team.\n\t+ Track KPIs including DAU, ARPDAU, LTV per user, open rates, click rates, and conversion, and surface insights tied to those metrics.\n\t+ Effectively manage our marketing CRM tool to drive new and innovative use cases that can be shared across the team\n\t+ Write SQL queries to investigate issues and campaign results using internal data**AI, Automation \\& Process Optimization**\n\n\n\t+ Identify opportunities to apply AI tools and automation across marketing workflows from copy generation to campaign QA to performance analysis.\n\t+ Build and iterate on tools, templates, and agents that reduce manual effort and improve output consistency.\n\t+ Stay current on emerging AI/automation capabilities and bring concrete recommendations for how they can be applied within Sezzle's marketing stack.**Cross\\-Functional Collaboration**\n\n\n\t+ Partner with marketing, product, data, and engineering teams to align on tooling decisions and ensure smooth implementation.\n\t+ Serve as a connector between technical teams and marketing stakeholders, translating requirements in both directions.\n\t+ Facilitate adoption of new tools and workflows by developing documentation, training materials, and hands\\-on support for team members.\n\t+ Identify and flag integration risks early; bring concrete mitigation recommendations.\n\n**What We Look for:**\n\n\n* **Skills \\& Competencies**\n\n\n\t+ Hands\\-on experience building or implementing AI tools, agents, and automation in a professional setting.\n\t+ Strong analytical skills, comfortable working with data, running queries, and presenting findings with context.\n\t+ Experience in consumer marketing operations, CRM platforms (Braze or similar), or marketing technology stacks; Braze experience is a plus.\n\t+ Ability to identify process inefficiencies and develop structured, scalable solutions.\n\t+ Excellent written and verbal communication skills, and you can explain technical concepts clearly to non\\-technical teammates.\n\t+ Basic project management skills; organized, proactive, and reliable with deadlines.\n\t+ Experience with segmentation, A/B testing, and performance reporting.\n\t+ Strong experience in data visualization tools and SQL.\n\t+ Ability to prioritize and manage multiple tasks simultaneously**Educational \\& Professional Experience**\n\n\n\t+ Background in computer science, analytics, engineering, AI, and/or related fields.\n\t+ Exposure to business, marketing, finance, or other related fields\n\t+ Previous internships or academic projects involving campaign management, marketing analytics, and content creation preferred.\n\t+ Professional, academic or personal projects that demonstrate an ability to creatively use AI to create efficiencies.\n\n**Preferred Qualifications:**\n\n\n* Experience building AI\\-first platforms or internal products from scratch, including early architectural decisions.\n* Strong foundation in core machine learning and data science principles, including supervised/unsupervised learning, feature engineering, model evaluation, and statistical inference.\n* Experience with transformer architectures (BERT, GPT, etc.) and understanding of attention mechanisms, tokenization, and fine\\-tuning strategies for domain\\-specific applications.\n* Experience developing AI\\-assisted or agentic systems that interact with tools, data, or workflows.\n* Familiarity with embeddings and vector representations, including text embeddings, similarity search, and integration with vector databases (Pinecone, Weaviate, pgvector, or similar).\n* Experience with NLP techniques including text classification, named entity recognition, semantic search, and information extraction.\n* Familiarity with cloud\\-native development using AWS.\n* Understanding of prompt engineering, retrieval\\-augmented generation (RAG), and LLM application patterns.\n* Experience with containerized systems and orchestration tools such as Docker and Kubernetes.\n* Exposure to CI/CD pipelines and modern development workflows (e.g., GitLab).\n* Experience with Golang is a plus (or willingness to learn).\n* Experience with Braze or similar consumer facing CRM platforms and/or various B2C digital marketing channels like affiliate, CTV, paid social, paid search, GEO/SEO, DSP.\n\n**About You:**\n\n\n* **You have relentlessly high standards** \\- many people may think your standards are unreasonably high. You are continually raising the bar and driving those around you to deliver great results. You make sure that defects do not get sent down the line and that problems are fixed so they stay fixed.\n* **You're not bound by convention** \\- your success—and much of the fun—lies in developing new ways to do things\n* **You need action** \\- speed matters in business. Many decisions and actions are reversible and do not need extensive study. We value calculated risk\\-taking.\n* **You earn trust** \\- you listen attentively, speak candidly, and treat others respectfully.\n\n**What Makes Working at Sezzle Awesome:**\n\n\n\nAt Sezzle, we are more than just brilliant engineers, passionate data enthusiasts, out\\-of\\-the\\-box thinkers, and determined innovators. We believe in surrounding ourselves with only the best and the brightest individuals. Our culture is not defined by a certain set of perks designed to give the illusion of the traditional startup culture, but rather, it is the visible example living in every employee that we hire.\n\n\n\n\\#Li\\-remote \\#full\\-time"
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4405995220",
+                "title": "Data Scientist - Forecasting & Optimization",
+                "company": "Félix",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4407540787",
+                "title": "Senior/Lead AI/ML Engineer",
+                "company": "Ryz Labs",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4407569271",
+                "title": "AI Software Engineer",
+                "company": "Emma of Torre.ai",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4327989718",
+                "title": "Machine Learning Expert",
+                "company": "Accenture Argentina",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4405141725",
+                "title": "ML AI ENGINEER // Multinacional de Software Financiero // REMOTO para residentes en ARGENTINA",
+                "company": "Reservados",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4406209734",
+                "title": "Software Engineer Backend",
+                "company": "PedidosYa",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4407434510",
+                "title": "Senior MuleSoft Software Engineer - OP02121",
+                "company": "Dev.Pro",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4406216098",
+                "title": "Senior Machine Learning Engineer",
+                "company": "Evolution Cloud Services (EVOCS)",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4405272971",
+                "title": "Data Engineer",
+                "company": "ExxonMobil",
+                "location": "Buenos Aires, Buenos Aires Province, Argentina",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4405159196",
+                "title": "Software Engineer Node.js SR - Home",
+                "company": "Naranja X",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4406211315",
+                "title": "Data Engineer ID52278",
+                "company": "AgileEngine",
+                "location": "San Juan, San Juan, Argentina",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4405996839",
+                "title": "Data Engineer ID52278",
+                "company": "AgileEngine",
+                "location": "Pilar, Buenos Aires Province, Argentina",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4405990730",
+                "title": "Software Engineer Node.js SSR - Credit Ops",
+                "company": "Naranja X",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4406208739",
+                "title": "Data Engineer ID52278",
+                "company": "AgileEngine",
+                "location": "Neuquén, Neuquén Province, Argentina",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4405136231",
+                "title": "Data Engineer",
+                "company": "Promtior",
+                "location": "Córdoba, Argentina",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4406208733",
+                "title": "Data Engineer ID52278",
+                "company": "AgileEngine",
+                "location": "Salta, Salta, Argentina",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4406204817",
+                "title": "Data Engineer ID52278",
+                "company": "AgileEngine",
+                "location": "La Plata, Buenos Aires Province, Argentina",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4239601784",
+                "title": "Senior Software Engineer (Backend Platform)",
+                "company": "Fever",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4407593146",
+                "title": "Software Engineer III - Python Developer",
+                "company": "JPMorganChase",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              },
+              {
+                "site": "linkedin",
+                "job_url": "https://www.linkedin.com/jobs/view/4406231526",
+                "title": "Senior Data Engineer",
+                "company": "Flexiti",
+                "location": "",
+                "date_posted": "",
+                "description": ""
+              }
+            ]
+          },
+          "pairedItem": {
+            "item": 0
+          }
+        }
+      ],
+      "Guardar empleos": [
+        {
+          "json": {
+            "id": 263,
+            "job_url": "https://ar.indeed.com/viewjob?jk=4644edfb98cd33d6",
+            "title": "Software Engineer III - Python Developer",
+            "company": "JPMorganChase",
+            "location": "Buenos Aires",
+            "date_posted": "B",
+            "description": "AR",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 0
+          }
+        },
+        {
+          "json": {
+            "id": 264,
+            "job_url": "https://ar.indeed.com/viewjob?jk=eb1ee61445e86c6f",
+            "title": "AI Software Engineer",
+            "company": "Citric Sheep Limited",
+            "location": "Desde casa",
+            "date_posted": "AR",
+            "description": "2026-04-27",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 1
+          }
+        },
+        {
+          "json": {
+            "id": 265,
+            "job_url": "https://ar.indeed.com/viewjob?jk=0b1e34a9988ce896",
+            "title": "Junior Marketing Analyst - Comms",
+            "company": "Sezzle",
+            "location": "Desde casa",
+            "date_posted": "AR",
+            "description": "2026-04-27",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 2
+          }
+        },
+        {
+          "json": {
+            "id": 266,
+            "job_url": "https://www.linkedin.com/jobs/view/4405995220",
+            "title": "Data Scientist - Forecasting & Optimization",
+            "company": "Félix",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 3
+          }
+        },
+        {
+          "json": {
+            "id": 267,
+            "job_url": "https://www.linkedin.com/jobs/view/4407540787",
+            "title": "Senior/Lead AI/ML Engineer",
+            "company": "Ryz Labs",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 4
+          }
+        },
+        {
+          "json": {
+            "id": 268,
+            "job_url": "https://www.linkedin.com/jobs/view/4407569271",
+            "title": "AI Software Engineer",
+            "company": "Emma of Torre.ai",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 5
+          }
+        },
+        {
+          "json": {
+            "id": 270,
+            "job_url": "https://www.linkedin.com/jobs/view/4405141725",
+            "title": "ML AI ENGINEER // Multinacional de Software Financiero // REMOTO para residentes en ARGENTINA",
+            "company": "Reservados",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 7
+          }
+        },
+        {
+          "json": {
+            "id": 271,
+            "job_url": "https://www.linkedin.com/jobs/view/4406209734",
+            "title": "Software Engineer Backend",
+            "company": "PedidosYa",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 8
+          }
+        },
+        {
+          "json": {
+            "id": 272,
+            "job_url": "https://www.linkedin.com/jobs/view/4407434510",
+            "title": "Senior MuleSoft Software Engineer - OP02121",
+            "company": "Dev.Pro",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 9
+          }
+        },
+        {
+          "json": {
+            "id": 273,
+            "job_url": "https://www.linkedin.com/jobs/view/4406216098",
+            "title": "Senior Machine Learning Engineer",
+            "company": "Evolution Cloud Services (EVOCS)",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 10
+          }
+        },
+        {
+          "json": {
+            "id": 274,
+            "job_url": "https://www.linkedin.com/jobs/view/4405272971",
+            "title": "Data Engineer",
+            "company": "ExxonMobil",
+            "location": "Buenos Aires",
+            "date_posted": "Buenos Aires Province",
+            "description": "Argentina",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 11
+          }
+        },
+        {
+          "json": {
+            "id": 275,
+            "job_url": "https://www.linkedin.com/jobs/view/4405159196",
+            "title": "Software Engineer Node.js SR - Home",
+            "company": "Naranja X",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 12
+          }
+        },
+        {
+          "json": {
+            "id": 276,
+            "job_url": "https://www.linkedin.com/jobs/view/4406211315",
+            "title": "Data Engineer ID52278",
+            "company": "AgileEngine",
+            "location": "San Juan",
+            "date_posted": "San Juan",
+            "description": "Argentina",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 13
+          }
+        },
+        {
+          "json": {
+            "id": 277,
+            "job_url": "https://www.linkedin.com/jobs/view/4405996839",
+            "title": "Data Engineer ID52278",
+            "company": "AgileEngine",
+            "location": "Pilar",
+            "date_posted": "Buenos Aires Province",
+            "description": "Argentina",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 14
+          }
+        },
+        {
+          "json": {
+            "id": 278,
+            "job_url": "https://www.linkedin.com/jobs/view/4405990730",
+            "title": "Software Engineer Node.js SSR - Credit Ops",
+            "company": "Naranja X",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 15
+          }
+        },
+        {
+          "json": {
+            "id": 279,
+            "job_url": "https://www.linkedin.com/jobs/view/4406208739",
+            "title": "Data Engineer ID52278",
+            "company": "AgileEngine",
+            "location": "Neuquén",
+            "date_posted": "Neuquén Province",
+            "description": "Argentina",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 16
+          }
+        },
+        {
+          "json": {
+            "id": 280,
+            "job_url": "https://www.linkedin.com/jobs/view/4405136231",
+            "title": "Data Engineer",
+            "company": "Promtior",
+            "location": "Córdoba",
+            "date_posted": "Argentina",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 17
+          }
+        },
+        {
+          "json": {
+            "id": 281,
+            "job_url": "https://www.linkedin.com/jobs/view/4406208733",
+            "title": "Data Engineer ID52278",
+            "company": "AgileEngine",
+            "location": "Salta",
+            "date_posted": "Salta",
+            "description": "Argentina",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 18
+          }
+        },
+        {
+          "json": {
+            "id": 282,
+            "job_url": "https://www.linkedin.com/jobs/view/4406204817",
+            "title": "Data Engineer ID52278",
+            "company": "AgileEngine",
+            "location": "La Plata",
+            "date_posted": "Buenos Aires Province",
+            "description": "Argentina",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 19
+          }
+        },
+        {
+          "json": {
+            "id": 283,
+            "job_url": "https://www.linkedin.com/jobs/view/4239601784",
+            "title": "Senior Software Engineer (Backend Platform)",
+            "company": "Fever",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 20
+          }
+        },
+        {
+          "json": {
+            "id": 284,
+            "job_url": "https://www.linkedin.com/jobs/view/4407593146",
+            "title": "Software Engineer III - Python Developer",
+            "company": "JPMorganChase",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 21
+          }
+        },
+        {
+          "json": {
+            "id": 285,
+            "job_url": "https://www.linkedin.com/jobs/view/4406231526",
+            "title": "Senior Data Engineer",
+            "company": "Flexiti",
+            "location": "null",
+            "date_posted": "null",
+            "description": "null",
+            "scraped_at": "2026-04-28T03:44:29.399Z",
+            "ai_score": null,
+            "ai_summary": null,
+            "processed": false,
+            "fit_highlights": null,
+            "red_flags": null
+          },
+          "pairedItem": {
+            "item": 22
+          }
+        }
+      ]
+    },
+    "versionId": "9846cb3e-a03d-4f94-a06a-f77ff767f4dc",
     "activeVersionId": null,
-    "versionCounter": 1072,
+    "versionCounter": 1106,
     "triggerCount": 0,
     "tags": [
       {
