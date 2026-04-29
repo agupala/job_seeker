@@ -15,10 +15,10 @@ echo "🚀 Iniciando backup automatizado..."
 echo "📦 Exportando todos los workflows..."
 if docker exec job_seeker-n8n-1 n8n export:workflow --all --output=/tmp/master_workflows.json > /dev/null 2>&1; then
     docker cp job_seeker-n8n-1:/tmp/master_workflows.json "./n8n/workflow.json"
-    # Dar formato al JSON para que sea legible
-    jq . "./n8n/workflow.json" > "./n8n/workflow_tmp.json" && mv "./n8n/workflow_tmp.json" "./n8n/workflow.json"
+    # Dar formato al JSON y asegurar que sea un objeto único (más fácil de importar)
+    jq 'if type == "array" then .[0] else . end' "./n8n/workflow.json" > "./n8n/workflow_tmp.json" && mv "./n8n/workflow_tmp.json" "./n8n/workflow.json"
     cp "./n8n/workflow.json" "$CURRENT_BACKUP/all_workflows_backup.json"
-    echo "✅ Workflows exportados y formateados."
+    echo "✅ Workflows exportados y listos para importar."
 else
     echo "❌ Error: No se pudo conectar con el contenedor n8n. ¿Está encendido?"
     exit 1

@@ -1,1777 +1,1018 @@
-[
-  {
-    "updatedAt": "2026-04-28T04:38:17.158Z",
-    "createdAt": "2026-04-19T23:17:38.999Z",
-    "id": "VPo3TTMDssh681uj",
-    "name": "Job Seeker",
-    "description": null,
-    "active": false,
-    "isArchived": false,
-    "nodes": [
-      {
-        "parameters": {
-          "url": "http://scraper:8000/scrape?days_old=1",
-          "options": {}
-        },
-        "id": "3652e01e-dea0-4cee-b5b2-cba6c935d737",
-        "name": "Scraper API (General)",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.1,
-        "position": [
-          -8848,
-          24704
-        ]
+{
+  "updatedAt": "2026-04-28T19:46:31.806Z",
+  "createdAt": "2026-04-19T23:17:38.999Z",
+  "id": "VPo3TTMDssh681uj",
+  "name": "Job Seeker",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "http://scraper:8000/scrape?days_old=5",
+        "options": {}
       },
-      {
-        "parameters": {
-          "model": "llama-3.1-8b-instant",
-          "options": {}
-        },
-        "id": "ed216d9f-547c-48ff-b3e1-6ff23ed1e0bd",
-        "name": "Groq",
-        "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
-        "typeVersion": 1,
-        "position": [
-          -9072,
-          25344
-        ],
-        "credentials": {
-          "groqApi": {
-            "id": "1RmGWWpJThIlyOT5",
-            "name": "Groq API Key"
-          }
-        },
-        "disabled": true
-      },
-      {
-        "parameters": {
-          "promptType": "define",
-          "text": "={{ $json.prompt }}"
-        },
-        "id": "14b3c5f0-4f29-43db-9e4c-91bfb32053ba",
-        "name": "Basic LLM Chain",
-        "type": "@n8n/n8n-nodes-langchain.chainLlm",
-        "typeVersion": 1.4,
-        "position": [
-          -6608,
-          24992
-        ]
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-2.5-flash-lite",
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          -6544,
-          25216
-        ],
-        "id": "eddf8cf5-c1db-4938-a9c9-62c66193211b",
-        "name": "Google Gemini Chat Model",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "fesJKZfGeBApeACe",
-            "name": "Job Seeker Gemini API Key"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "mode": "runOnceForEachItem",
-          "jsCode": "const txt = $json.text || '';\nconst clean = txt.replace(/```json|```/g, '').trim();\n\ntry {\n  const llmResult = JSON.parse(clean);\n  const originalJob = $('Loop').item.json;\n\n  return {\n    id: originalJob.id,\n    ai_score: llmResult.ai_score, // Mapeo score\n    ai_summary: llmResult.summary, // MAPEO: de \"summary\" (IA) a \"ai_summary\" (DB)\n    fit_highlights: JSON.stringify(llmResult.fit_highlights), // Convertimos array a texto\n    red_flags: JSON.stringify(llmResult.red_flags), // Convertimos array a texto\n    processed: true // Marcamos como procesado\n  };\n\n} catch (e) {\n  return { \n    error: \"Error parseando JSON de la IA\", \n    id: $('Loop').item.json.id,\n    processed: false \n  };\n}\n"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          -6256,
-          24992
-        ],
-        "id": "605ded75-b05c-4516-81e4-72d46fc17219",
-        "name": "Parsear respuesta"
-      },
-      {
-        "parameters": {
-          "operation": "upsert",
-          "schema": {
-            "__rl": true,
-            "mode": "list",
-            "value": "public"
-          },
-          "table": {
-            "__rl": true,
-            "value": "jobs",
-            "mode": "list",
-            "cachedResultName": "jobs"
-          },
-          "columns": {
-            "mappingMode": "autoMapInputData",
-            "value": {
-              "processed": false,
-              "id": 0,
-              "ai_score": 0
-            },
-            "matchingColumns": [
-              "id"
-            ],
-            "schema": [
-              {
-                "id": "id",
-                "displayName": "id",
-                "required": false,
-                "defaultMatch": true,
-                "display": true,
-                "type": "number",
-                "canBeUsedToMatch": true,
-                "removed": false
-              },
-              {
-                "id": "job_url",
-                "displayName": "job_url",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true
-              },
-              {
-                "id": "title",
-                "displayName": "title",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": false
-              },
-              {
-                "id": "company",
-                "displayName": "company",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": false
-              },
-              {
-                "id": "location",
-                "displayName": "location",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": false
-              },
-              {
-                "id": "date_posted",
-                "displayName": "date_posted",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": false
-              },
-              {
-                "id": "description",
-                "displayName": "description",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": false
-              },
-              {
-                "id": "scraped_at",
-                "displayName": "scraped_at",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "dateTime",
-                "canBeUsedToMatch": false
-              },
-              {
-                "id": "ai_score",
-                "displayName": "ai_score",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "number",
-                "canBeUsedToMatch": false
-              },
-              {
-                "id": "ai_summary",
-                "displayName": "ai_summary",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": false
-              },
-              {
-                "id": "processed",
-                "displayName": "processed",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "boolean",
-                "canBeUsedToMatch": false
-              },
-              {
-                "id": "fit_highlights",
-                "displayName": "fit_highlights",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": false
-              },
-              {
-                "id": "red_flags",
-                "displayName": "red_flags",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": false
-              }
-            ],
-            "attemptToConvertTypes": false,
-            "convertFieldsToString": false
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.6,
-        "position": [
-          -6048,
-          24992
-        ],
-        "id": "79c71f1d-7c43-4c36-9c44-7bf0552cbf9e",
-        "name": "Actualizar empleo",
-        "credentials": {
-          "postgres": {
-            "id": "DIQLOFTgMflMGYIx",
-            "name": "Postgres container"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "### 1. Ingesta\nObtiene vacantes en crudo vía API y las guarda en Postgres evitando duplicados.",
-          "height": 416
-        },
-        "id": "f626c754-9bce-422b-9f0d-818906efab30",
-        "name": "Note Ingesta",
-        "type": "n8n-nodes-base.stickyNote",
-        "typeVersion": 1,
-        "position": [
-          -8928,
-          24448
-        ]
-      },
-      {
-        "parameters": {
-          "content": "### 2. Pre-filtrado\nFiltra por palabras clave para no gastar IA en puestos que no sirven.",
-          "height": 432
-        },
-        "id": "bde286ba-78f0-4146-b904-084ab3a45b3b",
-        "name": "Note Filtro",
-        "type": "n8n-nodes-base.stickyNote",
-        "typeVersion": 1,
-        "position": [
-          -7808,
-          24496
-        ]
-      },
-      {
-        "parameters": {
-          "content": "### 3. Análisis IA\nEl LLM evalúa el perfil detallado y asigna el Score (1-5).",
-          "height": 464,
-          "width": 304
-        },
-        "id": "a63b9b1b-4c12-4412-87ea-7025ccbf0ef1",
-        "name": "Note IA",
-        "type": "n8n-nodes-base.stickyNote",
-        "typeVersion": 1,
-        "position": [
-          -6656,
-          24896
-        ]
-      },
-      {
-        "parameters": {
-          "content": "### 4. Reporte\nGenera el reporte visual y lo envía si hay matches >= 4."
-        },
-        "id": "f3ab2b3d-ae88-41ce-9317-24374cb5fcbe",
-        "name": "Note Reporte",
-        "type": "n8n-nodes-base.stickyNote",
-        "typeVersion": 1,
-        "position": [
-          -6608,
-          24368
-        ]
-      },
-      {
-        "parameters": {},
-        "id": "671a08ed-ef16-4329-b7c4-ad65cab96416",
-        "name": "Trigger",
-        "type": "n8n-nodes-base.manualTrigger",
-        "typeVersion": 1,
-        "position": [
-          -9072,
-          24704
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
-            },
-            "conditions": [
-              {
-                "id": "96d62ac6-0534-410c-85b3-cfd455e01af8",
-                "leftValue": "={{ parseInt($json.results.length) }}",
-                "rightValue": 0,
-                "operator": {
-                  "type": "number",
-                  "operation": "gt"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          -8624,
-          24704
-        ],
-        "id": "f50e5a24-b10e-4bd7-8bd3-ee106c62f6fc",
-        "name": "Filtrar empleos"
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "INSERT INTO jobs (job_url, title, company, location, date_posted, description)\nVALUES ($1, $2, $3, $4, $5, $6)\nON CONFLICT (job_url) DO NOTHING\nRETURNING *;",
-          "options": {
-            "queryReplacement": "=={{ $json.job_url || null }},\n={{ $json.title || null }},\n={{ $json.company || null }},\n={{ $json.location || null }},\n={{ $json.date_posted || null }},\n={{ $json.description || null }}"
-          }
-        },
-        "id": "59b0a77c-3034-49de-9bc8-d7a834e7593e",
-        "name": "Guardar empleos",
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.5,
-        "position": [
-          -8176,
-          24768
-        ],
-        "credentials": {
-          "postgres": {
-            "id": "DIQLOFTgMflMGYIx",
-            "name": "Postgres container"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "/**\nconst keywords = [\n  'data', 'machine learning', 'ml', 'mlops', 'llmops',\n  'ai engineer', 'python', 'analytics', 'scientist', 'data scientist',\n  'cientifico de datos', 'engineer', 'ingeniero', 'inteligencia'\n];\n\nconst res = $('Guardar empleos').all().filter(item => {\n  const title = (item.json.title || '').toLowerCase();\n  return keywords.some(k => title.includes(k));\n});\n\nreturn { jobs: res.map(i => i.json), count: res.length };\n**/\n\n/**\nconst keywords = [\n  'data scientist', 'ml engineer', 'analytics engineer', // más específicos arriba\n  'data', 'machine learning', 'ml', 'mlops', 'llmops',\n  'ai engineer', 'python', 'analytics', 'scientist',\n  'cientifico de datos', 'engineer', 'ingeniero', 'inteligencia'\n];\n**/\n\nconst configKeywords = $('Configuracion').first().json.keywords;\nconst keywords = configKeywords.split(',').map(k => k.trim().toLowerCase());\n\nconst filtered = $('Guardar empleos').all().filter(item => {\n  const title = (item.json.title || '').toLowerCase();\n  return keywords.some(k => title.includes(k));\n});\n\n// Ordenar por coincidencia con keywords más específicas\nfiltered.sort((a, b) => {\n  const titleA = (a.json.title || '').toLowerCase();\n  const titleB = (b.json.title || '').toLowerCase();\n  const idxA = keywords.findIndex(k => titleA.includes(k));\n  const idxB = keywords.findIndex(k => titleB.includes(k));\n  return idxA - idxB;\n});\n\n//const result = filtered.slice(0, 5);\nconst result = filtered; \n\n// Retornamos un único objeto con los resultados empaquetados\n// Esto garantiza que el flujo SIEMPRE continúe al siguiente nodo\nreturn {\n  jobs: result.map(item => item.json),\n  count: result.length\n};\n"
-        },
-        "id": "bf0918e6-abbd-43d1-b5f3-3d154886fa75",
-        "name": "Filtrar empleos relevantes",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          -7728,
-          24768
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
-            },
-            "conditions": [
-              {
-                "id": "623f37da-2a82-4437-a518-cab971492638",
-                "leftValue": "={{ $json.jobs.length }}",
-                "rightValue": 0,
-                "operator": {
-                  "type": "number",
-                  "operation": "gt"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          -7504,
-          24768
-        ],
-        "id": "9ddc9d08-1a8f-4678-a1a5-70b06aea24e0",
-        "name": "Filtrar si no hay empleos"
-      },
-      {
-        "parameters": {
-          "fieldToSplitOut": "results",
-          "options": {}
-        },
-        "id": "e0b65a71-fee5-4356-a992-1f66d2ad5ffa",
-        "name": "Desagrupar empleos DB",
-        "type": "n8n-nodes-base.splitOut",
-        "typeVersion": 1,
-        "position": [
-          -8400,
-          24768
-        ]
-      },
-      {
-        "parameters": {
-          "fieldToSplitOut": "jobs",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.splitOut",
-        "typeVersion": 1,
-        "position": [
-          -7280,
-          24992
-        ],
-        "id": "00f221af-45d7-46eb-aa41-febc9ba91d24",
-        "name": "Desagrupar empleos LLM"
-      },
-      {
-        "parameters": {
-          "options": {}
-        },
-        "id": "10cdeb72-5894-4b27-bb86-1033829052ee",
-        "name": "Loop",
-        "type": "n8n-nodes-base.splitInBatches",
-        "typeVersion": 3,
-        "position": [
-          -7056,
-          24992
-        ]
-      },
-      {
-        "parameters": {
-          "aggregate": "aggregateAllItemData",
-          "options": {}
-        },
-        "id": "118f19a3-1803-4d31-a7a4-a3f2f852f1d4",
-        "name": "Agrupar empleos",
-        "type": "n8n-nodes-base.aggregate",
-        "typeVersion": 1,
-        "position": [
-          -6832,
-          24688
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 1
-            },
-            "conditions": [
-              {
-                "leftValue": "={{ $json.status }}",
-                "rightValue": "MATCHES_FOUND",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals"
-                },
-                "id": "f53ec3c0-4ccf-47c1-b0af-bc51e4e0189a"
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "3926b534-196a-40bc-809f-9a450eec9093",
-        "name": "¿Hay matches?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2,
-        "position": [
-          -6256,
-          24688
-        ]
-      },
-      {
-        "parameters": {
-          "sendTo": "agustinsantiagopalau@gmail.com",
-          "subject": "🔍 Job Seeker: sin novedades hoy",
-          "message": "={{ (function(){ const f=new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}); return '<html><body style=\"font-family:Arial,sans-serif;padding:32px;background:#f1f5f9\"><div style=\"max-width:500px;margin:0 auto;background:#fff;border-radius:12px;padding:28px\"><h2 style=\"color:#374151\">🔍 Sin matches hoy</h2><p style=\"color:#4b5563\">Workflow ejecutado el <strong>'+f+'</strong>. Ninguna vacante superó score 4/5.</p><p style=\"color:#6b7280;font-size:14px\">Las vacantes fueron guardadas en la base de datos.</p></div></body></html>'; })() }}",
-          "options": {
-            "appendAttribution": false
-          }
-        },
-        "id": "1a2b6c31-8a81-48f5-9f08-789cbdca51b2",
-        "name": "Enviar NO novedades",
-        "type": "n8n-nodes-base.gmail",
-        "typeVersion": 2.2,
-        "position": [
-          -6032,
-          24496
-        ],
-        "webhookId": "cd5cfc57-107c-4acf-aea2-7f24d229072e",
-        "credentials": {
-          "gmailOAuth2": {
-            "id": "7XdXo1E6U5uELz85",
-            "name": "Enviar correo"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "sendTo": "agustinsantiagopalau@gmail.com",
-          "subject": "=🎯 Job seeker: {{ $json.count }} match{{ $json.count === 1 ? '' : 'es' }} hoy",
-          "message": "={{ $json.html }}",
-          "options": {
-            "appendAttribution": false
-          }
-        },
-        "id": "ed3e8201-6dc6-4be8-87cf-fa5c8352edb1",
-        "name": "Enviar novedades",
-        "type": "n8n-nodes-base.gmail",
-        "typeVersion": 2.2,
-        "position": [
-          -6032,
-          24752
-        ],
-        "webhookId": "fb15cc09-e696-4eb0-9270-510ce5e2efdd",
-        "credentials": {
-          "gmailOAuth2": {
-            "id": "7XdXo1E6U5uELz85",
-            "name": "Enviar correo"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "// 1. Obtenemos el array 'data'\nconst inputData = $input.all()[0].json.data || [];\n\n// 2. Filtramos y transformamos\nconst matches = inputData\n  .filter(item => item.ai_score >= 4)\n  .map(item => {\n    let highlights = [], redFlags = [];\n    try { highlights = typeof item.fit_highlights === 'string' ? JSON.parse(item.fit_highlights) : item.fit_highlights; } catch (e) {}\n    try { redFlags = typeof item.red_flags === 'string' ? JSON.parse(item.red_flags) : item.red_flags; } catch (e) {}\n\n    // Limpieza de ubicación (maneja el string \"null\" y valores nulos reales)\n    const rawLocation = String(item.location).toLowerCase();\n    const cleanLocation = (rawLocation === 'null' || !item.location) ? '' : ` • ${item.location}`;\n\n    return {\n      ...item,\n      displayLocation: cleanLocation,\n      fit_highlights: highlights || [],\n      red_flags: redFlags || []\n    };\n  });\n\nif (matches.length === 0) return [{ json: { status: 'NO_MATCHES' } }];\n\n// 3. Generamos el HTML optimizado\nfunction buildHtml(matches) {\n  // Fecha y Hora con formato local\n  const ahora = new Date().toLocaleString('es-AR', {\n    day: '2-digit', month: 'long', year: 'numeric',\n    hour: '2-digit', minute: '2-digit'\n  });\n\n  const rows = matches.map(m => {\n    const color = m.ai_score === 5 ? '#16a34a' : '#2563eb';\n    const emoji = m.ai_score === 5 ? '🔥' : '✅';\n    const highlightsHtml = m.fit_highlights.map(h => `<li style='margin-bottom:4px;'>${h}</li>`).join('');\n    const flagsHtml = m.red_flags.map(h => `<li style='margin-bottom:4px;'>${h}</li>`).join('');\n\n    return `\n      <div style='margin-bottom:24px; padding:24px; border-radius:16px; background:#ffffff; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);'>\n        <!-- Cabecera: Título y Score -->\n        <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n          <tr>\n            <td style=\"vertical-align: top;\">\n              <h2 style='margin:0; font-size:20px; color:#1e3a8a; line-height:1.2;'>${emoji} ${m.title}</h2>\n            </td>\n            <td style=\"vertical-align: top; text-align: right; padding-left: 15px;\">\n              <span style='background:${color}; color:#ffffff; padding:5px 14px; border-radius:100px; font-size:12px; font-weight:bold; white-space:nowrap; display:inline-block;'>\n                SCORE: ${m.ai_score}/5\n              </span>\n            </td>\n          </tr>\n        </table>\n\n        <!-- Empresa y Ubicación -->\n        <p style='font-size:15px; color:#64748b; margin:10px 0 16px'>\n          <strong style=\"color:#475569\">${m.company}</strong>${m.displayLocation}\n        </p>\n\n        <!-- Resumen -->\n        <div style='background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #f1f5f9; margin-bottom:20px;'>\n          <p style='color:#334155; font-size:14px; line-height:1.6; margin:0;'>${m.ai_summary}</p>\n        </div>\n\n        <!-- Listas -->\n        <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"font-size:14px; line-height:1.5;\">\n          <tr>\n            <td style=\"padding-bottom:15px;\">\n              <strong style='color:#15803d; display:block; margin-bottom:8px;'>✅ Por qué encaja:</strong>\n              <ul style='margin:0; padding-left:20px; color:#166534;'>${highlightsHtml}</ul>\n            </td>\n          </tr>\n          ${flagsHtml ? `\n          <tr>\n            <td>\n              <strong style='color:#b91c1c; display:block; margin-bottom:8px;'>⚠️ Atención con:</strong>\n              <ul style='margin:0; padding-left:20px; color:#991b1b;'>${flagsHtml}</ul>\n            </td>\n          </tr>` : ''}\n        </table>\n\n        <!-- Botón -->\n        <div style='margin-top:24px; text-align:right;'>\n          <a href='${m.job_url}' style='background:#1e40af; color:#ffffff; padding:10px 24px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:14px; display:inline-block;'>Aplicar en LinkedIn →</a>\n        </div>\n      </div>`;\n  }).join('');\n\n  return `\n    <!DOCTYPE html>\n    <html>\n      <body style='margin:0; padding:40px 20px; background:#f1f5f9; font-family:-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif;'>\n        <div style='max-width:600px; margin:0 auto;'>\n          <div style='text-align:center; margin-bottom:30px;'>\n            <h1 style='color:#0f172a; margin:0; font-size:26px;'>🎯 Nuevos Matches</h1>\n            <p style='color:#64748b; margin:10px 0 0; font-size:14px;'>Reporte del <b>${ahora}</b></p>\n            <div style=\"height:2px; width:40px; background:#2563eb; margin:20px auto;\"></div>\n          </div>\n          ${rows}\n          <div style='text-align:center; padding:20px; color:#94a3b8; font-size:12px;'>\n            <p>Este es un sistema inteligente de búsqueda — ${ahora}</p>\n          </div>\n        </div>\n      </body>\n    </html>`;\n}\n\nreturn [{ \n  json: { \n    status: 'MATCHES_FOUND', \n    count: matches.length, \n    html: buildHtml(matches) \n  } \n}];\n"
-        },
-        "id": "bc58f508-abb5-4249-9ff0-8466d0471e59",
-        "name": "Organizar HTML",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          -6544,
-          24688
-        ]
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "d5ca25c2-3d4f-4a79-996b-613a37b59759",
-                "name": "keywords",
-                "value": "data scientist, ml engineer, analytics engineer, data, machine learning, ml, mlops, llmops, ai engineer, python, analytics, scientist, cientifico de datos, engineer, ingeniero, inteligencia",
-                "type": "string"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [
-          -7952,
-          24768
-        ],
-        "id": "ebf4e40e-d0da-4e59-a6e5-d76359fac353",
-        "name": "Configuracion"
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "e7259aff-abf8-48be-8b29-e721dea65c20",
-                "name": "prompt",
-                "value": "=Sos un Senior Technical Recruiter especializado en Data Science, ML e Ingeniería de Datos.\n\n---\n\nPERFIL DEL CANDIDATO:\n- Formación: Ing. en Sistemas + Diplomatura en Inteligencia de Datos\n- Experiencia: ~3 años en datos/ML\n  · ML Developer en empresa de e-commerce líder LATAM (2.5 años): modelos predictivos, Python, Pandas, Pytorch, BigQuery, ETL/EDA, pipelines\n  · Data Engineer Ssr en fintech de seguros (actual): pipelines, SQL, n8n, LLM, Dagster\n- STACK: Python (Pandas), SQL, BigQuery, Dagster, PostgreSQL, Docker, AWS (S3), Git, FastAPI\n- ML: modelado predictivo, tuning, EDA\n- Inglés: B1 (lee docs técnicos, conversacional)\n- Seniority: Ssr (2-3 años exp requeridos)\n\n---\n\nROLES TARGET: \nData Scientist, ML Engineer, Data Engineer con ML/Analytics, MLOps/LLMOps, Analytics Engineer\n\n---\n\nVACANTE:\nTítulo: {{ $json.title }}\nEmpresa: {{ $json.company }}\nUbicación: {{ $json.location }}\nURL: {{ $json.job_url }}\nDescripción: {{ $json.description }}\n\n---\n\nSCORING:\n- 5: Fit total, Python+SQL+Cloud, sin inglés avanzado obligatorio.\n- 4: Buen fit, gap menor salvable.\n- 3: Fit parcial, gaps importantes.\n- 2: Seniority incorrecto o perfil alejado.\n- 1: DESCARTAR → Stack incompatible (C#/Java/.Net/PHP), rol Jr puro, Lead/Staff/VP/Manager, REQUERIMIENTO DE 4 AÑOS O MÁS DE EXPERIENCIA, o inglés fluido excluyente.\n\n---\n\nPENALIZACIONES:\n- Requiere 4 años o más de experiencia → Score 1 (DESCARTE OBLIGATORIO)\n- Lead/Staff/Principal/Manager/VP → Score 1\n- +4 años mínimo excluyente → Score 1\n- Inglés fluido excluyente → -2\n- C#/Java/.Net/PHP como stack principal → Score 1\n- Airflow excluyente (el candidato usa Dagster) → -1\n- Título 'Software Engineer' o 'Backend' a secas (sin mencionar Data/ML) → El score debe ser bajo (1-2), independientemente de que use Python.\n\n---\n\nBONIFICACIONES:\n- Python+SQL+Cloud (+1)\n- Pipelines/ETL/Dagster (+1)\n- ML en producción (+1)\n- Docker/AWS (+0.5)\n- Remoto/Híbrido CABA (+0.5)\n\n---\n\nRESPUESTA (ÚNICAMENTE JSON VÁLIDO, SIN BACKTICKS):\n{\n  \"ai_score\": <1-5>,\n  \"title\": \"<título>\",\n  \"company\": \"<empresa>\",\n  \"job_url\": \"<URL>\",\n  \"summary\": \"<justificación 2-3 oraciones>\",\n  \"fit_highlights\": [\"<fortaleza 1>\", \"<fortaleza 2>\"],\n  \"red_flags\": [\"<gap concreto 1>\", \"<gap concreto 2>\"]\n}\n",
-                "type": "string"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [
-          -6832,
-          24992
-        ],
-        "id": "feba7c8f-ce28-4c26-8ace-7e097b3ca27e",
-        "name": "Prompt"
-      },
-      {
-        "parameters": {
-          "jsCode": "// Intenta con global.setTimeout si setTimeout falla\nawait new Promise(resolve => global.setTimeout(resolve, 1000));\nreturn $input.all();\n"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          -6112,
-          25312
-        ],
-        "id": "d754be33-67a0-440c-94cc-26cc9e7245dd",
-        "name": "Delay 1 segundo"
-      }
-    ],
-    "connections": {
-      "Scraper API (General)": {
-        "main": [
-          [
-            {
-              "node": "Filtrar empleos",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Basic LLM Chain": {
-        "main": [
-          [
-            {
-              "node": "Parsear respuesta",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Google Gemini Chat Model": {
-        "ai_languageModel": [
-          [
-            {
-              "node": "Basic LLM Chain",
-              "type": "ai_languageModel",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Parsear respuesta": {
-        "main": [
-          [
-            {
-              "node": "Actualizar empleo",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Actualizar empleo": {
-        "main": [
-          [
-            {
-              "node": "Delay 1 segundo",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Trigger": {
-        "main": [
-          [
-            {
-              "node": "Scraper API (General)",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Filtrar empleos": {
-        "main": [
-          [
-            {
-              "node": "Desagrupar empleos DB",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Enviar NO novedades",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Guardar empleos": {
-        "main": [
-          [
-            {
-              "node": "Configuracion",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Filtrar empleos relevantes": {
-        "main": [
-          [
-            {
-              "node": "Filtrar si no hay empleos",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Filtrar si no hay empleos": {
-        "main": [
-          [
-            {
-              "node": "Desagrupar empleos LLM",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Enviar NO novedades",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Desagrupar empleos DB": {
-        "main": [
-          [
-            {
-              "node": "Guardar empleos",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Desagrupar empleos LLM": {
-        "main": [
-          [
-            {
-              "node": "Loop",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Loop": {
-        "main": [
-          [
-            {
-              "node": "Agrupar empleos",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Prompt",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Agrupar empleos": {
-        "main": [
-          [
-            {
-              "node": "Organizar HTML",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "¿Hay matches?": {
-        "main": [
-          [
-            {
-              "node": "Enviar novedades",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Enviar NO novedades",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Organizar HTML": {
-        "main": [
-          [
-            {
-              "node": "¿Hay matches?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Configuracion": {
-        "main": [
-          [
-            {
-              "node": "Filtrar empleos relevantes",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prompt": {
-        "main": [
-          [
-            {
-              "node": "Basic LLM Chain",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Delay 1 segundo": {
-        "main": [
-          [
-            {
-              "node": "Loop",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      }
-    },
-    "settings": {
-      "executionOrder": "v1",
-      "binaryMode": "separate"
-    },
-    "staticData": null,
-    "meta": {
-      "templateCredsSetupCompleted": true
-    },
-    "pinData": {
-      "Scraper API (General)": [
-        {
-          "json": {
-            "results": [
-              {
-                "site": "indeed",
-                "job_url": "https://ar.indeed.com/viewjob?jk=4644edfb98cd33d6",
-                "title": "Software Engineer III - Python Developer",
-                "company": "JPMorganChase",
-                "location": "Buenos Aires, B, AR",
-                "date_posted": "2026-04-27",
-                "description": "**JOB DESCRIPTION**  \n\nWe have an exciting and rewarding opportunity for you to take your software engineering career to the next level.\n\n\nAs a Software Engineer III at JPMorganChase within the Rates LOB, you serve as a seasoned member of an agile team to design and deliver trusted market\\-leading technology products in a secure, stable, and scalable way. You are responsible for carrying out critical technology solutions across multiple technical areas within various business functions in support of the firm’s business objectives.\n\n**Job responsibilities**\n\n* Executes software solutions, design, development, and technical troubleshooting with ability to think beyond routine or conventional approaches to build solutions or break down technical problems\n* Engages with stakeholders and understands business requirements\n* Provides production support for critical services\n* Creates secure and high\\-quality production code and maintains algorithms that run synchronously with appropriate systems\n* Produces architecture and design artifacts for complex applications while being accountable for ensuring design constraints are met by software code development\n* Gathers, analyzes, synthesizes, and develops visualizations and reporting from large, diverse data sets in service of continuous improvement of software applications and systems\n* Proactively identifies hidden problems and patterns in data and uses these insights to drive improvements to coding hygiene and system architecture\n* Contributes to software engineering communities of practice and events that explore new and emerging technologies\n* Adds to team culture of diversity, opportunity, inclusion, and respect\n\n**Required qualifications, capabilities, and skills**\n\n* At least 3 years of experience in similar role\n* Hands\\-on practical experience in system design, application development, testing, and operational stability\n* Solid coding level in Python and experience in leveraging available libraries to dedicated projects.\n* Experience in developing, debugging, and maintaining code in a large corporate environment with one or more modern programming languages and database querying languages\n* Overall knowledge of the Software Development Life Cycle\n* Solid understanding of agile methodologies such as CI/CD, Application Resiliency, and Security\n* Demonstrated knowledge of software applications and technical processes within a technical discipline (e.g., cloud, artificial intelligence, machine learning, mobile, etc.)\n\n\n\n\n**ABOUT US**  \n\n  \n\nJ.P. Morgan is a global leader in financial services, providing strategic advice and products to the world’s most prominent corporations, governments, wealthy individuals and institutional investors. Our first\\-class business in a first\\-class way approach to serving clients drives everything we do. We strive to build trusted, long\\-term partnerships to help our clients achieve their business objectives.  \n\n\nWe recognize that our people are our strength and the diverse talents they bring to our global workforce are directly linked to our success. We are an equal opportunity employer and place a high value on diversity and inclusion at our company. We do not discriminate on the basis of any protected attribute, including race, religion, color, national origin, gender, sexual orientation, gender identity, gender expression, age, marital or veteran status, pregnancy or disability, or any other basis protected under applicable law. We also make reasonable accommodations for applicants’ and employees’ religious practices and beliefs, as well as mental health or physical disability needs. Visit our FAQs for more information about requesting an accommodation.  \n\n  \n\n  \n\n**ABOUT THE TEAM**  \n\n  \n\nJ.P. Morgan’s Commercial \\& Investment Bank is a global leader across banking, markets, securities services and payments. Corporations, governments and institutions throughout the world entrust us with their business in more than 100 countries. The Commercial \\& Investment Bank provides strategic advice, raises capital, manages risk and extends liquidity in markets around the world."
-              },
-              {
-                "site": "indeed",
-                "job_url": "https://ar.indeed.com/viewjob?jk=eb1ee61445e86c6f",
-                "title": "AI Software Engineer",
-                "company": "Citric Sheep Limited",
-                "location": "Desde casa, AR",
-                "date_posted": "2026-04-27",
-                "description": "Citric Sheep is looking for an AI Software Engineer to join our flock.\n\nYou’ll work on cutting\\-edge AI systems involving LLMs, machine learning, computer vision, and Python\\-based applications, contributing to high\\-impact projects across different industries.\n\n**What You'll Do**\n\nYou will collaborate with our 100% remote engineering team to design, build, and maintain AI software systems across the full lifecycle — from prototyping to deployment.\n\nYour work will include:\n\n* Designing and developing scalable Python systems for AI applications\n* Implementing data\\-driven algorithms and ML models\n* Building and optimizing data pipelines and ETL workflows\n* Writing clean, maintainable, production\\-quality code\n\n**Minimum Requirements**\n\n* 3\\+ years of professional Python software development\n* Professional\\-level English\n* Experience with collaborative development tools (GitHub and project management tools)\n\n**Beneficial Skills**\n\n* LLM / ML / AI experience\n* Software architecture and system design\n* PyTorch / TensorFlow / Keras / Pandas / Jupyter\n* SQL / NoSQL / Vector databases\n* Unit testing and testable software design\n* PyCharm / Cursor IDEs\n* Cloud environments\n* CI/CD and containerization\n\n**About Citric Sheep**\n\nSince 2018, Citric Sheep has been building advanced AI systems for clients across multiple industries. We value clean engineering, collaboration, and continuous learning, with a strong focus on high\\-quality code and practical AI solutions.\n\n**Benefits**\n\n* Full\\-time contract\n* 100% remote work\n* Challenging AI projects across multiple industries\n* Access to modern AI technologies\n* Mentorship and collaborative engineering culture\n* Daily learning time and company hackathons\n\n**Hiring Process**\n\n* Screening Meeting\n* Technical Coding Session\n* Company Fit Meeting\n* Reference Call (reference required when applying; contacted only if you reach this stage)\n* Offer Meeting\n\nJob Types: Full\\-time, Permanent\n\nPay: $2,200,000\\.00 \\- $3,500,000\\.00 per month\n\nApplication Question(s):\n\n* Tell us about a technical problem you solved recently that you’re proud of. What made it challenging, and how did you solve it?\n* Professional Reference\n\nPlease provide the contact details for one former direct manager (or supervisor) who worked closely with you and can speak to your coding abilities. We need a name, role, company and email.\n\nNote: We will only contact your reference if you reach the final stage of our hiring process (prior to an offer). We will never contact references earlier in the process.\n\nWork Location: Remote"
-              },
-              {
-                "site": "indeed",
-                "job_url": "https://ar.indeed.com/viewjob?jk=0b1e34a9988ce896",
-                "title": "Junior Marketing Analyst - Comms",
-                "company": "Sezzle",
-                "location": "Desde casa, AR",
-                "date_posted": "2026-04-27",
-                "description": "**About Sezzle:**\n\n\n\nWith a mission to financially empower the next generation, Sezzle is revolutionizing the shopping experience beyond payments, blending cutting\\-edge tech with seamless, interest\\-free installment plans that make shopping smarter and more accessible. We're not just transforming payments; we're redefining how people discover, interact with, and purchase the things they love while driving real impact on merchant sales through increased conversions and higher order values. As we continue to shape the future of fintech and retail, we're building an innovative, dynamic team passionate about creating more than just a transaction but a truly unique shopping journey. If you're excited about pushing boundaries in tech and delivering a game\\-changing experience for consumers and merchants alike, come join us at Sezzle and help create the future of shopping!\n\n\n**About the Role:**\n\n\n\nWe are seeking a talented and motivated Marketing Analyst\\- Commswho is best in class, with a high IQ and a high EQ. This role presents an exciting opportunity to thrive in a dynamic, fast\\-paced environment within a rapidly growing team, with strong prospects for continued growth and increased ownership.\n\n\n\nThe Marketing Analyst \\- Comms, will sit at the intersection of data, CRM strategy, and AI\\-driven efficiency. We're looking for an execution\\-oriented person who owns their work from end\\-to\\-end. You'll dive into the details of how our campaigns operate across email, push, SMS, and in\\-app channels, spot friction and inefficiency, and design smarter ways forward. You'll spend most of your time inside Braze, Sezzle's primary consumer\\-focused CRM and marketing automation platform, building and analyzing campaigns across email, push, SMS, and in\\-app channels. You'll dig into performance data to identify what's working, surface gaps in our consumer journeys, and develop new comms to fill them. You'll also look for every opportunity to apply AI tools to make the team's output faster, sharper, and more scalable.  \n\nThis isn't a role where you wait for assignments. We want someone who can look at a set of data, identify the opportunity, and start building toward it then communicate what they found and why it matters to the team around them.\n\n\n**What You'll Do:**\n\n\n* **CRM Campaign Execution \\& Analysis**\n\n\n\t+ Build, launch, and iterate on campaigns and canvases in Braze across email, push, SMS, and in\\-app channels.\n\t+ Audit existing consumer journeys to identify engagement gaps, drop\\-off points, and missed messaging opportunities.\n\t+ Develop segmentation strategies and personalized comms that improve activation, engagement, and retention.\n\t+ Support A/B test design, execution, and readout — translating results into clear, actionable recommendations.\n\t+ Maintain performance dashboards and reporting frameworks that make campaign data interpretable for the broader marketing team.\n\t+ Track KPIs including DAU, ARPDAU, LTV per user, open rates, click rates, and conversion, and surface insights tied to those metrics.\n\t+ Effectively manage our marketing CRM tool to drive new and innovative use cases that can be shared across the team\n\t+ Write SQL queries to investigate issues and campaign results using internal data**AI, Automation \\& Process Optimization**\n\n\n\t+ Identify opportunities to apply AI tools and automation across marketing workflows from copy generation to campaign QA to performance analysis.\n\t+ Build and iterate on tools, templates, and agents that reduce manual effort and improve output consistency.\n\t+ Stay current on emerging AI/automation capabilities and bring concrete recommendations for how they can be applied within Sezzle's marketing stack.**Cross\\-Functional Collaboration**\n\n\n\t+ Partner with marketing, product, data, and engineering teams to align on tooling decisions and ensure smooth implementation.\n\t+ Serve as a connector between technical teams and marketing stakeholders, translating requirements in both directions.\n\t+ Facilitate adoption of new tools and workflows by developing documentation, training materials, and hands\\-on support for team members.\n\t+ Identify and flag integration risks early; bring concrete mitigation recommendations.\n\n**What We Look for:**\n\n\n* **Skills \\& Competencies**\n\n\n\t+ Hands\\-on experience building or implementing AI tools, agents, and automation in a professional setting.\n\t+ Strong analytical skills, comfortable working with data, running queries, and presenting findings with context.\n\t+ Experience in consumer marketing operations, CRM platforms (Braze or similar), or marketing technology stacks; Braze experience is a plus.\n\t+ Ability to identify process inefficiencies and develop structured, scalable solutions.\n\t+ Excellent written and verbal communication skills, and you can explain technical concepts clearly to non\\-technical teammates.\n\t+ Basic project management skills; organized, proactive, and reliable with deadlines.\n\t+ Experience with segmentation, A/B testing, and performance reporting.\n\t+ Strong experience in data visualization tools and SQL.\n\t+ Ability to prioritize and manage multiple tasks simultaneously**Educational \\& Professional Experience**\n\n\n\t+ Background in computer science, analytics, engineering, AI, and/or related fields.\n\t+ Exposure to business, marketing, finance, or other related fields\n\t+ Previous internships or academic projects involving campaign management, marketing analytics, and content creation preferred.\n\t+ Professional, academic or personal projects that demonstrate an ability to creatively use AI to create efficiencies.\n\n**Preferred Qualifications:**\n\n\n* Experience building AI\\-first platforms or internal products from scratch, including early architectural decisions.\n* Strong foundation in core machine learning and data science principles, including supervised/unsupervised learning, feature engineering, model evaluation, and statistical inference.\n* Experience with transformer architectures (BERT, GPT, etc.) and understanding of attention mechanisms, tokenization, and fine\\-tuning strategies for domain\\-specific applications.\n* Experience developing AI\\-assisted or agentic systems that interact with tools, data, or workflows.\n* Familiarity with embeddings and vector representations, including text embeddings, similarity search, and integration with vector databases (Pinecone, Weaviate, pgvector, or similar).\n* Experience with NLP techniques including text classification, named entity recognition, semantic search, and information extraction.\n* Familiarity with cloud\\-native development using AWS.\n* Understanding of prompt engineering, retrieval\\-augmented generation (RAG), and LLM application patterns.\n* Experience with containerized systems and orchestration tools such as Docker and Kubernetes.\n* Exposure to CI/CD pipelines and modern development workflows (e.g., GitLab).\n* Experience with Golang is a plus (or willingness to learn).\n* Experience with Braze or similar consumer facing CRM platforms and/or various B2C digital marketing channels like affiliate, CTV, paid social, paid search, GEO/SEO, DSP.\n\n**About You:**\n\n\n* **You have relentlessly high standards** \\- many people may think your standards are unreasonably high. You are continually raising the bar and driving those around you to deliver great results. You make sure that defects do not get sent down the line and that problems are fixed so they stay fixed.\n* **You're not bound by convention** \\- your success—and much of the fun—lies in developing new ways to do things\n* **You need action** \\- speed matters in business. Many decisions and actions are reversible and do not need extensive study. We value calculated risk\\-taking.\n* **You earn trust** \\- you listen attentively, speak candidly, and treat others respectfully.\n\n**What Makes Working at Sezzle Awesome:**\n\n\n\nAt Sezzle, we are more than just brilliant engineers, passionate data enthusiasts, out\\-of\\-the\\-box thinkers, and determined innovators. We believe in surrounding ourselves with only the best and the brightest individuals. Our culture is not defined by a certain set of perks designed to give the illusion of the traditional startup culture, but rather, it is the visible example living in every employee that we hire.\n\n\n\n\\#Li\\-remote \\#full\\-time"
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4405995220",
-                "title": "Data Scientist - Forecasting & Optimization",
-                "company": "Félix",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4407540787",
-                "title": "Senior/Lead AI/ML Engineer",
-                "company": "Ryz Labs",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4407569271",
-                "title": "AI Software Engineer",
-                "company": "Emma of Torre.ai",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4327989718",
-                "title": "Machine Learning Expert",
-                "company": "Accenture Argentina",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4405141725",
-                "title": "ML AI ENGINEER // Multinacional de Software Financiero // REMOTO para residentes en ARGENTINA",
-                "company": "Reservados",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4406209734",
-                "title": "Software Engineer Backend",
-                "company": "PedidosYa",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4407434510",
-                "title": "Senior MuleSoft Software Engineer - OP02121",
-                "company": "Dev.Pro",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4406216098",
-                "title": "Senior Machine Learning Engineer",
-                "company": "Evolution Cloud Services (EVOCS)",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4405272971",
-                "title": "Data Engineer",
-                "company": "ExxonMobil",
-                "location": "Buenos Aires, Buenos Aires Province, Argentina",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4405159196",
-                "title": "Software Engineer Node.js SR - Home",
-                "company": "Naranja X",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4406211315",
-                "title": "Data Engineer ID52278",
-                "company": "AgileEngine",
-                "location": "San Juan, San Juan, Argentina",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4405996839",
-                "title": "Data Engineer ID52278",
-                "company": "AgileEngine",
-                "location": "Pilar, Buenos Aires Province, Argentina",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4405990730",
-                "title": "Software Engineer Node.js SSR - Credit Ops",
-                "company": "Naranja X",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4406208739",
-                "title": "Data Engineer ID52278",
-                "company": "AgileEngine",
-                "location": "Neuquén, Neuquén Province, Argentina",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4405136231",
-                "title": "Data Engineer",
-                "company": "Promtior",
-                "location": "Córdoba, Argentina",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4406208733",
-                "title": "Data Engineer ID52278",
-                "company": "AgileEngine",
-                "location": "Salta, Salta, Argentina",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4406204817",
-                "title": "Data Engineer ID52278",
-                "company": "AgileEngine",
-                "location": "La Plata, Buenos Aires Province, Argentina",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4239601784",
-                "title": "Senior Software Engineer (Backend Platform)",
-                "company": "Fever",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4407593146",
-                "title": "Software Engineer III - Python Developer",
-                "company": "JPMorganChase",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              },
-              {
-                "site": "linkedin",
-                "job_url": "https://www.linkedin.com/jobs/view/4406231526",
-                "title": "Senior Data Engineer",
-                "company": "Flexiti",
-                "location": "",
-                "date_posted": "",
-                "description": ""
-              }
-            ]
-          },
-          "pairedItem": {
-            "item": 0
-          }
-        }
-      ],
-      "Guardar empleos": [
-        {
-          "json": {
-            "id": 263,
-            "job_url": "https://ar.indeed.com/viewjob?jk=4644edfb98cd33d6",
-            "title": "Software Engineer III - Python Developer",
-            "company": "JPMorganChase",
-            "location": "Buenos Aires",
-            "date_posted": "B",
-            "description": "AR",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 0
-          }
-        },
-        {
-          "json": {
-            "id": 264,
-            "job_url": "https://ar.indeed.com/viewjob?jk=eb1ee61445e86c6f",
-            "title": "AI Software Engineer",
-            "company": "Citric Sheep Limited",
-            "location": "Desde casa",
-            "date_posted": "AR",
-            "description": "2026-04-27",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 1
-          }
-        },
-        {
-          "json": {
-            "id": 265,
-            "job_url": "https://ar.indeed.com/viewjob?jk=0b1e34a9988ce896",
-            "title": "Junior Marketing Analyst - Comms",
-            "company": "Sezzle",
-            "location": "Desde casa",
-            "date_posted": "AR",
-            "description": "2026-04-27",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 2
-          }
-        },
-        {
-          "json": {
-            "id": 266,
-            "job_url": "https://www.linkedin.com/jobs/view/4405995220",
-            "title": "Data Scientist - Forecasting & Optimization",
-            "company": "Félix",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 3
-          }
-        },
-        {
-          "json": {
-            "id": 267,
-            "job_url": "https://www.linkedin.com/jobs/view/4407540787",
-            "title": "Senior/Lead AI/ML Engineer",
-            "company": "Ryz Labs",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 4
-          }
-        },
-        {
-          "json": {
-            "id": 268,
-            "job_url": "https://www.linkedin.com/jobs/view/4407569271",
-            "title": "AI Software Engineer",
-            "company": "Emma of Torre.ai",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 5
-          }
-        },
-        {
-          "json": {
-            "id": 270,
-            "job_url": "https://www.linkedin.com/jobs/view/4405141725",
-            "title": "ML AI ENGINEER // Multinacional de Software Financiero // REMOTO para residentes en ARGENTINA",
-            "company": "Reservados",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 7
-          }
-        },
-        {
-          "json": {
-            "id": 271,
-            "job_url": "https://www.linkedin.com/jobs/view/4406209734",
-            "title": "Software Engineer Backend",
-            "company": "PedidosYa",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 8
-          }
-        },
-        {
-          "json": {
-            "id": 272,
-            "job_url": "https://www.linkedin.com/jobs/view/4407434510",
-            "title": "Senior MuleSoft Software Engineer - OP02121",
-            "company": "Dev.Pro",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 9
-          }
-        },
-        {
-          "json": {
-            "id": 273,
-            "job_url": "https://www.linkedin.com/jobs/view/4406216098",
-            "title": "Senior Machine Learning Engineer",
-            "company": "Evolution Cloud Services (EVOCS)",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 10
-          }
-        },
-        {
-          "json": {
-            "id": 274,
-            "job_url": "https://www.linkedin.com/jobs/view/4405272971",
-            "title": "Data Engineer",
-            "company": "ExxonMobil",
-            "location": "Buenos Aires",
-            "date_posted": "Buenos Aires Province",
-            "description": "Argentina",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 11
-          }
-        },
-        {
-          "json": {
-            "id": 275,
-            "job_url": "https://www.linkedin.com/jobs/view/4405159196",
-            "title": "Software Engineer Node.js SR - Home",
-            "company": "Naranja X",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 12
-          }
-        },
-        {
-          "json": {
-            "id": 276,
-            "job_url": "https://www.linkedin.com/jobs/view/4406211315",
-            "title": "Data Engineer ID52278",
-            "company": "AgileEngine",
-            "location": "San Juan",
-            "date_posted": "San Juan",
-            "description": "Argentina",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 13
-          }
-        },
-        {
-          "json": {
-            "id": 277,
-            "job_url": "https://www.linkedin.com/jobs/view/4405996839",
-            "title": "Data Engineer ID52278",
-            "company": "AgileEngine",
-            "location": "Pilar",
-            "date_posted": "Buenos Aires Province",
-            "description": "Argentina",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 14
-          }
-        },
-        {
-          "json": {
-            "id": 278,
-            "job_url": "https://www.linkedin.com/jobs/view/4405990730",
-            "title": "Software Engineer Node.js SSR - Credit Ops",
-            "company": "Naranja X",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 15
-          }
-        },
-        {
-          "json": {
-            "id": 279,
-            "job_url": "https://www.linkedin.com/jobs/view/4406208739",
-            "title": "Data Engineer ID52278",
-            "company": "AgileEngine",
-            "location": "Neuquén",
-            "date_posted": "Neuquén Province",
-            "description": "Argentina",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 16
-          }
-        },
-        {
-          "json": {
-            "id": 280,
-            "job_url": "https://www.linkedin.com/jobs/view/4405136231",
-            "title": "Data Engineer",
-            "company": "Promtior",
-            "location": "Córdoba",
-            "date_posted": "Argentina",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 17
-          }
-        },
-        {
-          "json": {
-            "id": 281,
-            "job_url": "https://www.linkedin.com/jobs/view/4406208733",
-            "title": "Data Engineer ID52278",
-            "company": "AgileEngine",
-            "location": "Salta",
-            "date_posted": "Salta",
-            "description": "Argentina",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 18
-          }
-        },
-        {
-          "json": {
-            "id": 282,
-            "job_url": "https://www.linkedin.com/jobs/view/4406204817",
-            "title": "Data Engineer ID52278",
-            "company": "AgileEngine",
-            "location": "La Plata",
-            "date_posted": "Buenos Aires Province",
-            "description": "Argentina",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 19
-          }
-        },
-        {
-          "json": {
-            "id": 283,
-            "job_url": "https://www.linkedin.com/jobs/view/4239601784",
-            "title": "Senior Software Engineer (Backend Platform)",
-            "company": "Fever",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 20
-          }
-        },
-        {
-          "json": {
-            "id": 284,
-            "job_url": "https://www.linkedin.com/jobs/view/4407593146",
-            "title": "Software Engineer III - Python Developer",
-            "company": "JPMorganChase",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 21
-          }
-        },
-        {
-          "json": {
-            "id": 285,
-            "job_url": "https://www.linkedin.com/jobs/view/4406231526",
-            "title": "Senior Data Engineer",
-            "company": "Flexiti",
-            "location": "null",
-            "date_posted": "null",
-            "description": "null",
-            "scraped_at": "2026-04-28T03:44:29.399Z",
-            "ai_score": null,
-            "ai_summary": null,
-            "processed": false,
-            "fit_highlights": null,
-            "red_flags": null
-          },
-          "pairedItem": {
-            "item": 22
-          }
-        }
+      "id": "23ed3271-e243-4d4a-aa5b-e7ddaf79b79f",
+      "name": "Scraper API (General)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2224,
+        496
       ]
     },
-    "versionId": "ccbcbdd2-0de9-4fac-b1d0-cd6ba16abf44",
-    "activeVersionId": null,
-    "versionCounter": 1110,
-    "triggerCount": 0,
-    "tags": [
-      {
-        "updatedAt": "2026-04-20T02:15:20.361Z",
-        "createdAt": "2026-04-20T02:15:20.361Z",
-        "id": "n46zH3KBakeeZGqt",
-        "name": "fastapi"
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
       },
-      {
-        "updatedAt": "2026-04-20T02:15:16.553Z",
-        "createdAt": "2026-04-20T02:15:16.553Z",
-        "id": "V9poL2dokDeJ1YTC",
-        "name": "jobs"
-      }
-    ],
-    "shared": [
-      {
-        "updatedAt": "2026-04-19T23:17:38.999Z",
-        "createdAt": "2026-04-19T23:17:38.999Z",
-        "role": "workflow:owner",
-        "workflowId": "VPo3TTMDssh681uj",
-        "projectId": "E9NqyW9tYTJgqECB",
-        "project": {
-          "updatedAt": "2026-04-19T23:15:16.268Z",
-          "createdAt": "2026-04-19T23:12:20.043Z",
-          "id": "E9NqyW9tYTJgqECB",
-          "name": "Agustin Palau <agustinsantiagopalau@gmail.com>",
-          "type": "personal",
-          "icon": null,
-          "description": null,
-          "creatorId": "0358eadb-d203-423b-a7d6-65d8d8782c4f"
+      "id": "33cdb79d-f6ff-4147-aafa-1c3d6ed478b5",
+      "name": "Groq",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -2448,
+        1136
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "1RmGWWpJThIlyOT5",
+          "name": "Groq API Key"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}"
+      },
+      "id": "b2096293-7f63-4b01-a6a5-b29bae1533e8",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        16,
+        784
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        1008
+      ],
+      "id": "e522b42c-3ff4-4982-adc9-43e982d4a470",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fesJKZfGeBApeACe",
+          "name": "Job Seeker Gemini API Key"
         }
       }
-    ],
-    "versionMetadata": {
-      "name": null,
-      "description": null
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const txt = $json.text || '';\nconst clean = txt.replace(/```json|```/g, '').trim();\n\ntry {\n  const llmResult = JSON.parse(clean);\n  const originalJob = $('Loop').item.json;\n\n  return {\n    ...originalJob,\n    ai_score: llmResult.ai_score, // Mapeo score\n    ai_summary: llmResult.summary, // MAPEO: de \"summary\" (IA) a \"ai_summary\" (DB)\n    fit_highlights: JSON.stringify(llmResult.fit_highlights), // Convertimos array a texto\n    red_flags: JSON.stringify(llmResult.red_flags), // Convertimos array a texto\n    processed: true // Marcamos como procesado\n  };\n\n} catch (e) {\n  return { \n    error: \"Error parseando JSON de la IA\", \n    id: $('Loop').item.json.id,\n    processed: false \n  };\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        784
+      ],
+      "id": "c55375ef-eabd-4cfc-a195-b4f088a4e8d2",
+      "name": "Parsear respuesta"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "jobs",
+          "mode": "list",
+          "cachedResultName": "jobs"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "processed": false,
+            "id": 0,
+            "ai_score": 0
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "job_url",
+              "displayName": "job_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "date_posted",
+              "displayName": "date_posted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "scraped_at",
+              "displayName": "scraped_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "ai_score",
+              "displayName": "ai_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "ai_summary",
+              "displayName": "ai_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "processed",
+              "displayName": "processed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "fit_highlights",
+              "displayName": "fit_highlights",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "red_flags",
+              "displayName": "red_flags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        576,
+        784
+      ],
+      "id": "b1bb7c8e-6d19-4d2c-ac39-aa0726843a35",
+      "name": "Actualizar empleo",
+      "credentials": {
+        "postgres": {
+          "id": "DIQLOFTgMflMGYIx",
+          "name": "Postgres container"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 1. Ingesta\nObtiene vacantes en crudo vía API y las guarda en Postgres evitando duplicados.",
+        "height": 416
+      },
+      "id": "508b9431-6ef7-4962-b228-d44237495c48",
+      "name": "Note Ingesta",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2304,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 2. Pre-filtrado\nFiltra por palabras clave para no gastar IA en puestos que no sirven.",
+        "height": 432
+      },
+      "id": "78994c53-124c-4ce4-b329-b570b407cca8",
+      "name": "Note Filtro",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 3. Análisis IA\nEl LLM evalúa el perfil detallado y asigna el Score (1-5).",
+        "height": 464,
+        "width": 304
+      },
+      "id": "fb22e0bc-2cce-469d-a37d-b9cbcaabeec0",
+      "name": "Note IA",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 4. Reporte\nGenera el reporte visual y lo envía si hay matches >= 4."
+      },
+      "id": "e5664d5f-e98a-4652-8268-eeedc2844598",
+      "name": "Note Reporte",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        160
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "0f503b5f-f699-4e73-9c3f-8bda248c0cc9",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2448,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "96d62ac6-0534-410c-85b3-cfd455e01af8",
+              "leftValue": "={{ parseInt($json.results.length) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2000,
+        496
+      ],
+      "id": "4727a0c7-c762-4c83-87ca-a998ad833aa7",
+      "name": "Filtrar empleos"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO jobs (job_url, title, company, location, date_posted, description)\nVALUES ($1, $2, $3, $4, $5, $6)\nON CONFLICT (job_url) DO UPDATE SET title = EXCLUDED.title WHERE jobs.processed = false OR (jobs.ai_score >= 4 AND jobs.notified = false)\nRETURNING *;",
+        "options": {
+          "queryReplacement": "={{ $json.job_url || null }},\n={{ $json.title || null }},\n={{ $json.company || null }},\n={{ $json.location || null }},\n={{ $json.date_posted || null }},\n={{ $json.description || null }}"
+        }
+      },
+      "id": "64dbcc47-daad-4289-a373-93d5b23cc99b",
+      "name": "Guardar empleos",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -1552,
+        560
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "DIQLOFTgMflMGYIx",
+          "name": "Postgres container"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\nconst keywords = [\n  'data', 'machine learning', 'ml', 'mlops', 'llmops',\n  'ai engineer', 'python', 'analytics', 'scientist', 'data scientist',\n  'cientifico de datos', 'engineer', 'ingeniero', 'inteligencia'\n];\n\nconst res = $('Guardar empleos').all().filter(item => {\n  const title = (item.json.title || '').toLowerCase();\n  return keywords.some(k => title.includes(k));\n});\n\nreturn { jobs: res.map(i => i.json), count: res.length };\n**/\n\n/**\nconst keywords = [\n  'data scientist', 'ml engineer', 'analytics engineer', // más específicos arriba\n  'data', 'machine learning', 'ml', 'mlops', 'llmops',\n  'ai engineer', 'python', 'analytics', 'scientist',\n  'cientifico de datos', 'engineer', 'ingeniero', 'inteligencia'\n];\n**/\n\nconst configKeywords = $('Configuracion').first().json.keywords;\nconst keywords = configKeywords.split(',').map(k => k.trim().toLowerCase());\n\nconst filtered = $('Guardar empleos').all().filter(item => {\n  const title = (item.json.title || '').toLowerCase();\n  return keywords.some(k => title.includes(k));\n});\n\n// Ordenar por coincidencia con keywords más específicas\nfiltered.sort((a, b) => {\n  const titleA = (a.json.title || '').toLowerCase();\n  const titleB = (b.json.title || '').toLowerCase();\n  const idxA = keywords.findIndex(k => titleA.includes(k));\n  const idxB = keywords.findIndex(k => titleB.includes(k));\n  return idxA - idxB;\n});\n\n//const result = filtered.slice(0, 5);\nconst result = filtered; \n\n// Retornamos un único objeto con los resultados empaquetados\n// Esto garantiza que el flujo SIEMPRE continúe al siguiente nodo\nreturn {\n  jobs: result.map(item => item.json),\n  count: result.length\n};\n"
+      },
+      "id": "0ee9485d-20c9-4171-bcd6-00e5a2daf21e",
+      "name": "Filtrar empleos relevantes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1104,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "623f37da-2a82-4437-a518-cab971492638",
+              "leftValue": "={{ $json.jobs.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -880,
+        560
+      ],
+      "id": "d05520e1-ddd3-41ee-be0d-be3bdd75437d",
+      "name": "Filtrar si no hay empleos"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "id": "16b15644-3a24-437a-881c-8b28a43e2d29",
+      "name": "Desagrupar empleos DB",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1776,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "jobs",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        784
+      ],
+      "id": "d51f4ba6-4dfa-4ab5-9b4e-285a82eb92aa",
+      "name": "Desagrupar empleos LLM"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7f3ca087-e39c-480a-bf88-736bb4fa53d7",
+      "name": "Loop",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -432,
+        784
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  data: $('Actualizar empleo').all().map(i => i.json)\n};"
+      },
+      "id": "cab49cb3-da2a-4415-8833-d28ab2a3b2d9",
+      "name": "Agrupar empleos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "MATCHES_FOUND",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "id": "f53ec3c0-4ccf-47c1-b0af-bc51e4e0189a"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "52ed5e03-2331-4352-bbd3-de2f69bb89a4",
+      "name": "¿Hay matches?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        368,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "agustinsantiagopalau@gmail.com",
+        "subject": "🔍 Job Seeker: sin novedades hoy",
+        "message": "={{ (function(){ const f=new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}); return '<html><body style=\"font-family:Arial,sans-serif;padding:32px;background:#f1f5f9\"><div style=\"max-width:500px;margin:0 auto;background:#fff;border-radius:12px;padding:28px\"><h2 style=\"color:#374151\">🔍 Sin matches hoy</h2><p style=\"color:#4b5563\">Workflow ejecutado el <strong>'+f+'</strong>. Ninguna vacante superó score 4/5.</p><p style=\"color:#6b7280;font-size:14px\">Las vacantes fueron guardadas en la base de datos.</p></div></body></html>'; })() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "32010771-ab1c-40e4-8d9a-f9a58cba17a5",
+      "name": "Enviar NO novedades",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        288
+      ],
+      "webhookId": "cd5cfc57-107c-4acf-aea2-7f24d229072e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7XdXo1E6U5uELz85",
+          "name": "Enviar correo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "agustinsantiagopalau@gmail.com",
+        "subject": "=🎯 Job seeker: {{ $json.count }} match{{ $json.count === 1 ? '' : 'es' }} hoy",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "ebac45a7-fb51-4d67-85bb-37fb238b7cca",
+      "name": "Enviar novedades",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        544
+      ],
+      "webhookId": "fb15cc09-e696-4eb0-9270-510ce5e2efdd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7XdXo1E6U5uELz85",
+          "name": "Enviar correo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Obtenemos el array 'data'\nconst inputData = $input.all()[0].json.data || [];\n\n// 2. Filtramos y transformamos\nconst matches = inputData\n  .filter(item => item.ai_score >= 4)\n  .map(item => {\n    let highlights = [], redFlags = [];\n    try { highlights = typeof item.fit_highlights === 'string' ? JSON.parse(item.fit_highlights) : item.fit_highlights; } catch (e) {}\n    try { redFlags = typeof item.red_flags === 'string' ? JSON.parse(item.red_flags) : item.red_flags; } catch (e) {}\n\n    // Limpieza de ubicación (maneja el string \"null\" y valores nulos reales)\n    const rawLocation = String(item.location).toLowerCase();\n    const cleanLocation = (rawLocation === 'null' || !item.location) ? '' : ` • ${item.location}`;\n\n    return {\n      ...item,\n      displayLocation: cleanLocation,\n      fit_highlights: highlights || [],\n      red_flags: redFlags || []\n    };\n  });\n\nif (matches.length === 0) return [{ json: { status: 'NO_MATCHES' } }];\n\n// 3. Generamos el HTML optimizado\nfunction buildHtml(matches) {\n  // Fecha y Hora con formato local\n  const ahora = new Date().toLocaleString('es-AR', {\n    day: '2-digit', month: 'long', year: 'numeric',\n    hour: '2-digit', minute: '2-digit'\n  });\n\n  const rows = matches.map(m => {\n    const color = m.ai_score === 5 ? '#16a34a' : '#2563eb';\n    const emoji = m.ai_score === 5 ? '🔥' : '✅';\n    const highlightsHtml = m.fit_highlights.map(h => `<li style='margin-bottom:4px;'>${h}</li>`).join('');\n    const flagsHtml = m.red_flags.map(h => `<li style='margin-bottom:4px;'>${h}</li>`).join('');\n\n    return `\n      <div style='margin-bottom:24px; padding:24px; border-radius:16px; background:#ffffff; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);'>\n        <!-- Cabecera: Título y Score -->\n        <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n          <tr>\n            <td style=\"vertical-align: top;\">\n              <h2 style='margin:0; font-size:20px; color:#1e3a8a; line-height:1.2;'>${emoji} ${m.title}</h2>\n            </td>\n            <td style=\"vertical-align: top; text-align: right; padding-left: 15px;\">\n              <span style='background:${color}; color:#ffffff; padding:5px 14px; border-radius:100px; font-size:12px; font-weight:bold; white-space:nowrap; display:inline-block;'>\n                SCORE: ${m.ai_score}/5\n              </span>\n            </td>\n          </tr>\n        </table>\n\n        <!-- Empresa y Ubicación -->\n        <p style='font-size:15px; color:#64748b; margin:10px 0 16px'>\n          <strong style=\"color:#475569\">${m.company}</strong>${m.displayLocation}\n        </p>\n\n        <!-- Resumen -->\n        <div style='background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #f1f5f9; margin-bottom:20px;'>\n          <p style='color:#334155; font-size:14px; line-height:1.6; margin:0;'>${m.ai_summary}</p>\n        </div>\n\n        <!-- Listas -->\n        <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"font-size:14px; line-height:1.5;\">\n          <tr>\n            <td style=\"padding-bottom:15px;\">\n              <strong style='color:#15803d; display:block; margin-bottom:8px;'>✅ Por qué encaja:</strong>\n              <ul style='margin:0; padding-left:20px; color:#166534;'>${highlightsHtml}</ul>\n            </td>\n          </tr>\n          ${flagsHtml ? `\n          <tr>\n            <td>\n              <strong style='color:#b91c1c; display:block; margin-bottom:8px;'>⚠️ Atención con:</strong>\n              <ul style='margin:0; padding-left:20px; color:#991b1b;'>${flagsHtml}</ul>\n            </td>\n          </tr>` : ''}\n        </table>\n\n        <!-- Botón -->\n        <div style='margin-top:24px; text-align:right;'>\n          <a href='${m.job_url}' style='background:#1e40af; color:#ffffff; padding:10px 24px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:14px; display:inline-block;'>Aplicar en LinkedIn →</a>\n        </div>\n      </div>`;\n  }).join('');\n\n  return `\n    <!DOCTYPE html>\n    <html>\n      <body style='margin:0; padding:40px 20px; background:#f1f5f9; font-family:-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif;'>\n        <div style='max-width:600px; margin:0 auto;'>\n          <div style='text-align:center; margin-bottom:30px;'>\n            <h1 style='color:#0f172a; margin:0; font-size:26px;'>🎯 Nuevos Matches</h1>\n            <p style='color:#64748b; margin:10px 0 0; font-size:14px;'>Reporte del <b>${ahora}</b></p>\n            <div style=\"height:2px; width:40px; background:#2563eb; margin:20px auto;\"></div>\n          </div>\n          ${rows}\n          <div style='text-align:center; padding:20px; color:#94a3b8; font-size:12px;'>\n            <p>Este es un sistema inteligente de búsqueda — ${ahora}</p>\n          </div>\n        </div>\n      </body>\n    </html>`;\n}\n\nreturn [{ \n  json: { \n    status: 'MATCHES_FOUND', \n    count: matches.length, \n    html: buildHtml(matches),\n    ids: matches.map(m => m.id) // Pasamos los IDs para marcarlos como notificados luego\n  } \n}];\n"
+      },
+      "id": "b00e1c8f-d1ae-443c-a52a-7140e45dc219",
+      "name": "Organizar HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d5ca25c2-3d4f-4a79-996b-613a37b59759",
+              "name": "keywords",
+              "value": "data scientist, ml engineer, analytics engineer, data, machine learning, ml, mlops, llmops, ai engineer, python, analytics, scientist, cientifico de datos, engineer, ingeniero, inteligencia",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1328,
+        560
+      ],
+      "id": "85789735-b6b9-4a60-8156-25ee9d457fc5",
+      "name": "Configuracion"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e7259aff-abf8-48be-8b29-e721dea65c20",
+              "name": "prompt",
+              "value": "=Sos un Senior Technical Recruiter especializado en Data Science, ML e Ingeniería de Datos.\n\n---\n\nPERFIL DEL CANDIDATO:\n- Formación: Ing. en Sistemas + Diplomatura en Inteligencia de Datos\n- Experiencia: ~3 años en datos/ML\n  · ML Developer en empresa de e-commerce líder LATAM (2.5 años): modelos predictivos, Python, Pandas, Pytorch, BigQuery, ETL/EDA, pipelines\n  · Data Engineer Ssr en fintech de seguros (actual): pipelines, SQL, n8n, LLM, Dagster\n- STACK: Python (Pandas), SQL, BigQuery, Dagster, PostgreSQL, Docker, AWS (S3), Git, FastAPI\n- ML: modelado predictivo, tuning, EDA\n- Inglés: B1 (lee docs técnicos, conversacional)\n- Seniority: Ssr (2-3 años exp requeridos)\n\n---\n\nROLES TARGET: \nData Scientist, ML Engineer, Data Engineer con ML/Analytics, MLOps/LLMOps, Analytics Engineer\n\n---\n\nVACANTE:\nTítulo: {{ $json.title }}\nEmpresa: {{ $json.company }}\nUbicación: {{ $json.location }}\nURL: {{ $json.job_url }}\nDescripción: {{ $json.description }}\n\n---\n\nSCORING:\n- 5: Fit total, Python+SQL+Cloud, sin inglés avanzado obligatorio.\n- 4: Buen fit, gap menor salvable.\n- 3: Fit parcial, gaps importantes.\n- 2: Seniority incorrecto o perfil alejado.\n- 1: DESCARTAR → Stack incompatible (C#/Java/.Net/PHP), rol Jr puro, Lead/Staff/VP/Manager, REQUERIMIENTO DE 4 AÑOS O MÁS DE EXPERIENCIA, o inglés fluido excluyente.\n\n---\n\nPENALIZACIONES:\n- Requiere 4 años o más de experiencia → Score 1 (DESCARTE OBLIGATORIO)\n- Lead/Staff/Principal/Manager/VP → Score 1\n- +4 años mínimo excluyente → Score 1\n- Inglés fluido excluyente → -2\n- C#/Java/.Net/PHP como stack principal → Score 1\n- Airflow excluyente (el candidato usa Dagster) → -1\n- Título 'Software Engineer' o 'Backend' a secas (sin mencionar Data/ML) → El score debe ser bajo (1-2), independientemente de que use Python.\n\n---\n\nBONIFICACIONES:\n- Python+SQL+Cloud (+1)\n- Pipelines/ETL/Dagster (+1)\n- ML en producción (+1)\n- Docker/AWS (+0.5)\n- Remoto/Híbrido CABA (+0.5)\n\n---\n\nRESPUESTA (ÚNICAMENTE JSON VÁLIDO, SIN BACKTICKS):\n{\n  \"ai_score\": <1-5>,\n  \"title\": \"<título>\",\n  \"company\": \"<empresa>\",\n  \"job_url\": \"<URL>\",\n  \"summary\": \"<justificación 2-3 oraciones>\",\n  \"fit_highlights\": [\"<fortaleza 1>\", \"<fortaleza 2>\"],\n  \"red_flags\": [\"<gap concreto 1>\", \"<gap concreto 2>\"]\n}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        784
+      ],
+      "id": "a6f59857-6b85-4840-949d-81544ba549a9",
+      "name": "Prompt"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Intenta con global.setTimeout si setTimeout falla\nawait new Promise(resolve => global.setTimeout(resolve, 1000));\nreturn $input.all();\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        1104
+      ],
+      "id": "3a0d7f39-7f73-4fb9-a87a-08ad2cebc986",
+      "name": "Delay 1 segundo"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM jobs WHERE processed = false OR (ai_score >= 4 AND notified = false);",
+        "options": {}
+      },
+      "id": "f42fb4f6-5838-47db-95d6-e4e6fd63f9fe",
+      "name": "Recuperar pendientes",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2224,
+        720
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "DIQLOFTgMflMGYIx",
+          "name": "Postgres container"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE jobs SET notified = true WHERE id IN ({{ $('Organizar HTML').item.json.ids.join(',') }});\n",
+        "options": {}
+      },
+      "id": "b9625b18-33c3-4ac5-b4cb-ba0057bdde03",
+      "name": "Marcar como notificados",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        816,
+        544
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "DIQLOFTgMflMGYIx",
+          "name": "Postgres container"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "id": "957aea96-033a-45d7-aec5-f39ecd3c8770",
+      "name": "Unir resultados",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        -1696,
+        912
+      ]
+    }
+  ],
+  "connections": {
+    "Scraper API (General)": {
+      "main": [
+        [
+          {
+            "node": "Filtrar empleos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Parsear respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear respuesta": {
+      "main": [
+        [
+          {
+            "node": "Actualizar empleo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar empleo": {
+      "main": [
+        [
+          {
+            "node": "Delay 1 segundo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Scraper API (General)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Recuperar pendientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recuperar pendientes": {
+      "main": [
+        [
+          {
+            "node": "Unir resultados",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Filtrar empleos": {
+      "main": [
+        [
+          {
+            "node": "Desagrupar empleos DB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar NO novedades",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar empleos": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar empleos relevantes": {
+      "main": [
+        [
+          {
+            "node": "Filtrar si no hay empleos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar si no hay empleos": {
+      "main": [
+        [
+          {
+            "node": "Desagrupar empleos LLM",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar NO novedades",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Desagrupar empleos DB": {
+      "main": [
+        [
+          {
+            "node": "Unir resultados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unir resultados": {
+      "main": [
+        [
+          {
+            "node": "Guardar empleos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Desagrupar empleos LLM": {
+      "main": [
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop": {
+      "main": [
+        [
+          {
+            "node": "Agrupar empleos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agrupar empleos": {
+      "main": [
+        [
+          {
+            "node": "Organizar HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay matches?": {
+      "main": [
+        [
+          {
+            "node": "Enviar novedades",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar NO novedades",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar novedades": {
+      "main": [
+        [
+          {
+            "node": "Marcar como notificados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizar HTML": {
+      "main": [
+        [
+          {
+            "node": "¿Hay matches?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "Filtrar empleos relevantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompt": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay 1 segundo": {
+      "main": [
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  {
-    "updatedAt": "2026-04-19T23:46:48.984Z",
-    "createdAt": "2026-04-19T23:46:48.984Z",
-    "id": "MosWqquPgTs183nq",
-    "name": "Gmail MCP - Server",
-    "description": null,
-    "active": false,
-    "isArchived": false,
-    "nodes": [
-      {
-        "parameters": {
-          "operation": "getAll",
-          "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
-          "filters": {}
-        },
-        "type": "n8n-nodes-base.gmailTool",
-        "typeVersion": 2.1,
-        "position": [
-          -112,
-          224
-        ],
-        "id": "8aceee8c-c493-400d-93e1-d6fc0cbe9522",
-        "name": "obtener_correos",
-        "webhookId": "fb81b750-68eb-4ad5-a424-9ca3bf18f04b"
-      },
-      {
-        "parameters": {
-          "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
-          "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
-          "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
-          "options": {
-            "appendAttribution": false,
-            "ccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('CC', ``, 'string') }}"
-          }
-        },
-        "type": "n8n-nodes-base.gmailTool",
-        "typeVersion": 2.1,
-        "position": [
-          16,
-          224
-        ],
-        "id": "6dcae012-08ff-433c-985e-64a0dfdcfb10",
-        "name": "enviar_correo",
-        "webhookId": "fb81b750-68eb-4ad5-a424-9ca3bf18f04b"
-      },
-      {
-        "parameters": {
-          "resource": "draft",
-          "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
-          "emailType": "html",
-          "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.gmailTool",
-        "typeVersion": 2.1,
-        "position": [
-          144,
-          224
-        ],
-        "id": "3dc9c6f3-3d77-490d-a3c1-3d6d5dbac4f7",
-        "name": "crear_borrador",
-        "webhookId": "fb81b750-68eb-4ad5-a424-9ca3bf18f04b"
-      },
-      {
-        "parameters": {
-          "operation": "markAsRead",
-          "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
-        },
-        "type": "n8n-nodes-base.gmailTool",
-        "typeVersion": 2.1,
-        "position": [
-          272,
-          224
-        ],
-        "id": "bcbc00ba-fafa-489d-be8b-ed0a8003b21d",
-        "name": "marcar_leido_correo",
-        "webhookId": "fb81b750-68eb-4ad5-a424-9ca3bf18f04b"
-      },
-      {
-        "parameters": {
-          "path": "72d89efd-d053-4cc5-8f92-95539ab26f7c"
-        },
-        "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
-        "typeVersion": 2,
-        "position": [
-          0,
-          0
-        ],
-        "id": "d39bf68f-9cb3-46be-8de6-66e7f68fb5f6",
-        "name": "MCP Server Gmail",
-        "webhookId": "72d89efd-d053-4cc5-8f92-95539ab26f7c"
-      }
-    ],
-    "connections": {
-      "obtener_correos": {
-        "ai_tool": [
-          [
-            {
-              "node": "MCP Server Gmail",
-              "type": "ai_tool",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "enviar_correo": {
-        "ai_tool": [
-          [
-            {
-              "node": "MCP Server Gmail",
-              "type": "ai_tool",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "crear_borrador": {
-        "ai_tool": [
-          [
-            {
-              "node": "MCP Server Gmail",
-              "type": "ai_tool",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "marcar_leido_correo": {
-        "ai_tool": [
-          [
-            {
-              "node": "MCP Server Gmail",
-              "type": "ai_tool",
-              "index": 0
-            }
-          ]
-        ]
-      }
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "01282b49-5256-4212-a875-69ee9f100875",
+  "activeVersionId": null,
+  "versionCounter": 1126,
+  "triggerCount": 0,
+  "tags": [
+    {
+      "updatedAt": "2026-04-20T02:15:20.361Z",
+      "createdAt": "2026-04-20T02:15:20.361Z",
+      "id": "n46zH3KBakeeZGqt",
+      "name": "fastapi"
     },
-    "settings": {
-      "executionOrder": "v1",
-      "binaryMode": "separate"
-    },
-    "staticData": null,
-    "meta": null,
-    "pinData": {},
-    "versionId": "cdce603c-86c4-40a9-94f3-4b25733f3963",
-    "activeVersionId": null,
-    "versionCounter": 1,
-    "triggerCount": 0,
-    "tags": [
-      {
-        "updatedAt": "2026-04-19T23:46:47.401Z",
-        "createdAt": "2026-04-19T23:46:47.401Z",
-        "id": "c0HGvaXyJyHxNZi5",
-        "name": "MCP"
-      },
-      {
-        "updatedAt": "2026-04-19T23:46:47.375Z",
-        "createdAt": "2026-04-19T23:46:47.375Z",
-        "id": "4xdLoowV3TbWUEz3",
-        "name": "Server"
-      }
-    ],
-    "shared": [
-      {
-        "updatedAt": "2026-04-19T23:46:48.984Z",
-        "createdAt": "2026-04-19T23:46:48.984Z",
-        "role": "workflow:owner",
-        "workflowId": "MosWqquPgTs183nq",
-        "projectId": "E9NqyW9tYTJgqECB",
-        "project": {
-          "updatedAt": "2026-04-19T23:15:16.268Z",
-          "createdAt": "2026-04-19T23:12:20.043Z",
-          "id": "E9NqyW9tYTJgqECB",
-          "name": "Agustin Palau <agustinsantiagopalau@gmail.com>",
-          "type": "personal",
-          "icon": null,
-          "description": null,
-          "creatorId": "0358eadb-d203-423b-a7d6-65d8d8782c4f"
-        }
-      }
-    ],
-    "versionMetadata": {
-      "name": null,
-      "description": null
+    {
+      "updatedAt": "2026-04-20T02:15:16.553Z",
+      "createdAt": "2026-04-20T02:15:16.553Z",
+      "id": "V9poL2dokDeJ1YTC",
+      "name": "jobs"
     }
+  ],
+  "shared": [
+    {
+      "updatedAt": "2026-04-19T23:17:38.999Z",
+      "createdAt": "2026-04-19T23:17:38.999Z",
+      "role": "workflow:owner",
+      "workflowId": "VPo3TTMDssh681uj",
+      "projectId": "E9NqyW9tYTJgqECB",
+      "project": {
+        "updatedAt": "2026-04-19T23:15:16.268Z",
+        "createdAt": "2026-04-19T23:12:20.043Z",
+        "id": "E9NqyW9tYTJgqECB",
+        "name": "Agustin Palau <agustinsantiagopalau@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "0358eadb-d203-423b-a7d6-65d8d8782c4f"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
   }
-]
+}
