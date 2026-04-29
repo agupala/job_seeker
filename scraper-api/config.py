@@ -19,7 +19,7 @@ ATS_PATTERNS: List[str] = ["site:greenhouse.io", "site:lever.co"]
 # Empresas del sector energético argentino que queremos revisar
 ENERGY_COMPANIES: List[str] = [
     "YPF", "Pampa Energía", "Pan American Energy", "Tecpetrol",
-    "Shell", "Vista Energy", "Techint", "ExxonMobil", "Chevron", "Total Energies"
+    "Shell", "Techint", "ExxonMobil", "Chevron", "Total Energies"
 ]
 
 # Variantes de títulos/queries para búsquedas en empresas de energía

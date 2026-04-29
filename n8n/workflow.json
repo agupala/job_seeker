@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-28T19:46:31.806Z",
+  "updatedAt": "2026-04-29T04:53:51.419Z",
   "createdAt": "2026-04-19T23:17:38.999Z",
   "id": "VPo3TTMDssh681uj",
   "name": "Job Seeker",
@@ -9,16 +9,16 @@
   "nodes": [
     {
       "parameters": {
-        "url": "http://scraper:8000/scrape?days_old=5",
+        "url": "http://scraper:8000/scrape?days_old=3&results=40",
         "options": {}
       },
-      "id": "23ed3271-e243-4d4a-aa5b-e7ddaf79b79f",
+      "id": "17f0550f-19a2-4f50-b71b-87e2048f3a9e",
       "name": "Scraper API (General)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -2224,
-        496
+        -3936,
+        272
       ]
     },
     {
@@ -26,13 +26,13 @@
         "model": "llama-3.1-8b-instant",
         "options": {}
       },
-      "id": "33cdb79d-f6ff-4147-aafa-1c3d6ed478b5",
+      "id": "687ac796-63fc-4890-b7a4-4c8438f28948",
       "name": "Groq",
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [
-        -2448,
-        1136
+        -4384,
+        960
       ],
       "credentials": {
         "groqApi": {
@@ -47,13 +47,13 @@
         "promptType": "define",
         "text": "={{ $json.prompt }}"
       },
-      "id": "b2096293-7f63-4b01-a6a5-b29bae1533e8",
+      "id": "1831c9af-ca06-49f9-9ddb-d5a88071c0f8",
       "name": "Basic LLM Chain",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.4,
       "position": [
-        16,
-        784
+        -1248,
+        336
       ]
     },
     {
@@ -64,10 +64,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        80,
-        1008
+        -1176,
+        560
       ],
-      "id": "e522b42c-3ff4-4982-adc9-43e982d4a470",
+      "id": "8a2c8e2f-2cc0-4396-8371-c9058a702092",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
@@ -79,15 +79,15 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const txt = $json.text || '';\nconst clean = txt.replace(/```json|```/g, '').trim();\n\ntry {\n  const llmResult = JSON.parse(clean);\n  const originalJob = $('Loop').item.json;\n\n  return {\n    ...originalJob,\n    ai_score: llmResult.ai_score, // Mapeo score\n    ai_summary: llmResult.summary, // MAPEO: de \"summary\" (IA) a \"ai_summary\" (DB)\n    fit_highlights: JSON.stringify(llmResult.fit_highlights), // Convertimos array a texto\n    red_flags: JSON.stringify(llmResult.red_flags), // Convertimos array a texto\n    processed: true // Marcamos como procesado\n  };\n\n} catch (e) {\n  return { \n    error: \"Error parseando JSON de la IA\", \n    id: $('Loop').item.json.id,\n    processed: false \n  };\n}\n"
+        "jsCode": "const txt = $json.text || '';\nconst clean = txt.replace(/```json|```/g, '').trim();\n\ntry {\n  const llmResult = JSON.parse(clean);\n\n  // Ya no buscamos en el Loop. Usamos directo lo que responde la IA.\n  return {\n    id: llmResult.id, \n    ai_score: llmResult.ai_score,\n    ai_summary: llmResult.summary,\n    fit_highlights: JSON.stringify(llmResult.fit_highlights),\n    red_flags: JSON.stringify(llmResult.red_flags),\n    processed: true\n  };\n\n} catch (e) {\n  return { \n    error: \"Error parseando JSON de la IA\", \n    processed: false \n  };\n}\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        368,
-        784
+        -896,
+        440
       ],
-      "id": "c55375ef-eabd-4cfc-a195-b4f088a4e8d2",
+      "id": "94b71284-75c9-46a5-a3bf-9226b7117287",
       "name": "Parsear respuesta"
     },
     {
@@ -242,10 +242,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        576,
-        784
+        -672,
+        440
       ],
-      "id": "b1bb7c8e-6d19-4d2c-ac39-aa0726843a35",
+      "id": "23b2a460-ee7d-4427-abc3-2baed0da6ca4",
       "name": "Actualizar empleo",
       "credentials": {
         "postgres": {
@@ -259,13 +259,13 @@
         "content": "### 1. Ingesta\nObtiene vacantes en crudo vía API y las guarda en Postgres evitando duplicados.",
         "height": 416
       },
-      "id": "508b9431-6ef7-4962-b228-d44237495c48",
+      "id": "1aad3aa9-a87e-4434-b8ff-3c54397a9959",
       "name": "Note Ingesta",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -2304,
-        240
+        -4008,
+        16
       ]
     },
     {
@@ -273,52 +273,52 @@
         "content": "### 2. Pre-filtrado\nFiltra por palabras clave para no gastar IA en puestos que no sirven.",
         "height": 432
       },
-      "id": "78994c53-124c-4ce4-b329-b570b407cca8",
+      "id": "a7ce1491-dbf4-4ad7-8647-21e2bc84c7e2",
       "name": "Note Filtro",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -1184,
-        288
+        -2664,
+        168
       ]
     },
     {
       "parameters": {
         "content": "### 3. Análisis IA\nEl LLM evalúa el perfil detallado y asigna el Score (1-5).",
-        "height": 464,
+        "height": 192,
         "width": 304
       },
-      "id": "fb22e0bc-2cce-469d-a37d-b9cbcaabeec0",
+      "id": "68a9dc76-1714-429f-a586-423230298226",
       "name": "Note IA",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -32,
-        688
+        -1296,
+        256
       ]
     },
     {
       "parameters": {
         "content": "### 4. Reporte\nGenera el reporte visual y lo envía si hay matches >= 4."
       },
-      "id": "e5664d5f-e98a-4652-8268-eeedc2844598",
+      "id": "02d82667-7009-4275-b4b2-c61a76d8102d",
       "name": "Note Reporte",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        16,
-        160
+        -1920,
+        -16
       ]
     },
     {
       "parameters": {},
-      "id": "0f503b5f-f699-4e73-9c3f-8bda248c0cc9",
+      "id": "d8c0eb8e-b8be-43ba-ada4-0492e627ec42",
       "name": "Trigger",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -2448,
-        496
+        -4384,
+        368
       ]
     },
     {
@@ -348,10 +348,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -2000,
-        496
+        -3488,
+        368
       ],
-      "id": "4727a0c7-c762-4c83-87ca-a998ad833aa7",
+      "id": "b6b0e8fc-32a9-4099-9271-4dbc49c37b69",
       "name": "Filtrar empleos"
     },
     {
@@ -362,13 +362,13 @@
           "queryReplacement": "={{ $json.job_url || null }},\n={{ $json.title || null }},\n={{ $json.company || null }},\n={{ $json.location || null }},\n={{ $json.date_posted || null }},\n={{ $json.description || null }}"
         }
       },
-      "id": "64dbcc47-daad-4289-a373-93d5b23cc99b",
+      "id": "e40fe92a-7266-4ddb-864d-220d47dc4477",
       "name": "Guardar empleos",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -1552,
-        560
+        -3040,
+        440
       ],
       "credentials": {
         "postgres": {
@@ -381,13 +381,13 @@
       "parameters": {
         "jsCode": "/**\nconst keywords = [\n  'data', 'machine learning', 'ml', 'mlops', 'llmops',\n  'ai engineer', 'python', 'analytics', 'scientist', 'data scientist',\n  'cientifico de datos', 'engineer', 'ingeniero', 'inteligencia'\n];\n\nconst res = $('Guardar empleos').all().filter(item => {\n  const title = (item.json.title || '').toLowerCase();\n  return keywords.some(k => title.includes(k));\n});\n\nreturn { jobs: res.map(i => i.json), count: res.length };\n**/\n\n/**\nconst keywords = [\n  'data scientist', 'ml engineer', 'analytics engineer', // más específicos arriba\n  'data', 'machine learning', 'ml', 'mlops', 'llmops',\n  'ai engineer', 'python', 'analytics', 'scientist',\n  'cientifico de datos', 'engineer', 'ingeniero', 'inteligencia'\n];\n**/\n\nconst configKeywords = $('Configuracion').first().json.keywords;\nconst keywords = configKeywords.split(',').map(k => k.trim().toLowerCase());\n\nconst filtered = $('Guardar empleos').all().filter(item => {\n  const title = (item.json.title || '').toLowerCase();\n  return keywords.some(k => title.includes(k));\n});\n\n// Ordenar por coincidencia con keywords más específicas\nfiltered.sort((a, b) => {\n  const titleA = (a.json.title || '').toLowerCase();\n  const titleB = (b.json.title || '').toLowerCase();\n  const idxA = keywords.findIndex(k => titleA.includes(k));\n  const idxB = keywords.findIndex(k => titleB.includes(k));\n  return idxA - idxB;\n});\n\n//const result = filtered.slice(0, 5);\nconst result = filtered; \n\n// Retornamos un único objeto con los resultados empaquetados\n// Esto garantiza que el flujo SIEMPRE continúe al siguiente nodo\nreturn {\n  jobs: result.map(item => item.json),\n  count: result.length\n};\n"
       },
-      "id": "0ee9485d-20c9-4171-bcd6-00e5a2daf21e",
+      "id": "03a02565-4124-4f00-a7f8-6d63af43d5e8",
       "name": "Filtrar empleos relevantes",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1104,
-        560
+        -2592,
+        440
       ]
     },
     {
@@ -417,10 +417,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -880,
-        560
+        -2368,
+        440
       ],
-      "id": "d05520e1-ddd3-41ee-be0d-be3bdd75437d",
+      "id": "6eaed180-de32-4568-8520-aa35b07a1fef",
       "name": "Filtrar si no hay empleos"
     },
     {
@@ -428,13 +428,13 @@
         "fieldToSplitOut": "results",
         "options": {}
       },
-      "id": "16b15644-3a24-437a-881c-8b28a43e2d29",
+      "id": "f6ac56b1-0504-40a2-badf-a3b3bed5e573",
       "name": "Desagrupar empleos DB",
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        -1776,
-        560
+        -3264,
+        440
       ]
     },
     {
@@ -445,36 +445,36 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        -656,
-        784
+        -2144,
+        660
       ],
-      "id": "d51f4ba6-4dfa-4ab5-9b4e-285a82eb92aa",
+      "id": "32d9ad58-3b74-4968-b885-16dcedd8e666",
       "name": "Desagrupar empleos LLM"
     },
     {
       "parameters": {
         "options": {}
       },
-      "id": "7f3ca087-e39c-480a-bf88-736bb4fa53d7",
+      "id": "6ea68333-aa77-4d0b-b05b-d4f3fb8cdaa2",
       "name": "Loop",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -432,
-        784
+        -1920,
+        660
       ]
     },
     {
       "parameters": {
-        "jsCode": "return {\n  data: $('Actualizar empleo').all().map(i => i.json)\n};"
+        "jsCode": "return {\n  data: $input.all().map(i => i.json)\n};\n"
       },
-      "id": "cab49cb3-da2a-4415-8833-d28ab2a3b2d9",
+      "id": "56172642-0881-4ae7-a33c-8aabf9d204e4",
       "name": "Agrupar empleos",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -208,
-        480
+        -1696,
+        144
       ]
     },
     {
@@ -501,13 +501,13 @@
         },
         "options": {}
       },
-      "id": "52ed5e03-2331-4352-bbd3-de2f69bb89a4",
+      "id": "60e9f68f-029b-4a7e-9cb3-0c64aa173955",
       "name": "¿Hay matches?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        368,
-        480
+        -1200,
+        80
       ]
     },
     {
@@ -519,13 +519,13 @@
           "appendAttribution": false
         }
       },
-      "id": "32010771-ab1c-40e4-8d9a-f9a58cba17a5",
+      "id": "3a4c0bdf-e03f-484e-af5c-0cdc1db171c1",
       "name": "Enviar NO novedades",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        592,
-        288
+        -896,
+        -48
       ],
       "webhookId": "cd5cfc57-107c-4acf-aea2-7f24d229072e",
       "credentials": {
@@ -544,13 +544,13 @@
           "appendAttribution": false
         }
       },
-      "id": "ebac45a7-fb51-4d67-85bb-37fb238b7cca",
+      "id": "178d8c95-288b-417d-a012-41f879c5c030",
       "name": "Enviar novedades",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        592,
-        544
+        -896,
+        196
       ],
       "webhookId": "fb15cc09-e696-4eb0-9270-510ce5e2efdd",
       "credentials": {
@@ -564,13 +564,13 @@
       "parameters": {
         "jsCode": "// 1. Obtenemos el array 'data'\nconst inputData = $input.all()[0].json.data || [];\n\n// 2. Filtramos y transformamos\nconst matches = inputData\n  .filter(item => item.ai_score >= 4)\n  .map(item => {\n    let highlights = [], redFlags = [];\n    try { highlights = typeof item.fit_highlights === 'string' ? JSON.parse(item.fit_highlights) : item.fit_highlights; } catch (e) {}\n    try { redFlags = typeof item.red_flags === 'string' ? JSON.parse(item.red_flags) : item.red_flags; } catch (e) {}\n\n    // Limpieza de ubicación (maneja el string \"null\" y valores nulos reales)\n    const rawLocation = String(item.location).toLowerCase();\n    const cleanLocation = (rawLocation === 'null' || !item.location) ? '' : ` • ${item.location}`;\n\n    return {\n      ...item,\n      displayLocation: cleanLocation,\n      fit_highlights: highlights || [],\n      red_flags: redFlags || []\n    };\n  });\n\nif (matches.length === 0) return [{ json: { status: 'NO_MATCHES' } }];\n\n// 3. Generamos el HTML optimizado\nfunction buildHtml(matches) {\n  // Fecha y Hora con formato local\n  const ahora = new Date().toLocaleString('es-AR', {\n    day: '2-digit', month: 'long', year: 'numeric',\n    hour: '2-digit', minute: '2-digit'\n  });\n\n  const rows = matches.map(m => {\n    const color = m.ai_score === 5 ? '#16a34a' : '#2563eb';\n    const emoji = m.ai_score === 5 ? '🔥' : '✅';\n    const highlightsHtml = m.fit_highlights.map(h => `<li style='margin-bottom:4px;'>${h}</li>`).join('');\n    const flagsHtml = m.red_flags.map(h => `<li style='margin-bottom:4px;'>${h}</li>`).join('');\n\n    return `\n      <div style='margin-bottom:24px; padding:24px; border-radius:16px; background:#ffffff; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);'>\n        <!-- Cabecera: Título y Score -->\n        <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n          <tr>\n            <td style=\"vertical-align: top;\">\n              <h2 style='margin:0; font-size:20px; color:#1e3a8a; line-height:1.2;'>${emoji} ${m.title}</h2>\n            </td>\n            <td style=\"vertical-align: top; text-align: right; padding-left: 15px;\">\n              <span style='background:${color}; color:#ffffff; padding:5px 14px; border-radius:100px; font-size:12px; font-weight:bold; white-space:nowrap; display:inline-block;'>\n                SCORE: ${m.ai_score}/5\n              </span>\n            </td>\n          </tr>\n        </table>\n\n        <!-- Empresa y Ubicación -->\n        <p style='font-size:15px; color:#64748b; margin:10px 0 16px'>\n          <strong style=\"color:#475569\">${m.company}</strong>${m.displayLocation}\n        </p>\n\n        <!-- Resumen -->\n        <div style='background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #f1f5f9; margin-bottom:20px;'>\n          <p style='color:#334155; font-size:14px; line-height:1.6; margin:0;'>${m.ai_summary}</p>\n        </div>\n\n        <!-- Listas -->\n        <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"font-size:14px; line-height:1.5;\">\n          <tr>\n            <td style=\"padding-bottom:15px;\">\n              <strong style='color:#15803d; display:block; margin-bottom:8px;'>✅ Por qué encaja:</strong>\n              <ul style='margin:0; padding-left:20px; color:#166534;'>${highlightsHtml}</ul>\n            </td>\n          </tr>\n          ${flagsHtml ? `\n          <tr>\n            <td>\n              <strong style='color:#b91c1c; display:block; margin-bottom:8px;'>⚠️ Atención con:</strong>\n              <ul style='margin:0; padding-left:20px; color:#991b1b;'>${flagsHtml}</ul>\n            </td>\n          </tr>` : ''}\n        </table>\n\n        <!-- Botón -->\n        <div style='margin-top:24px; text-align:right;'>\n          <a href='${m.job_url}' style='background:#1e40af; color:#ffffff; padding:10px 24px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:14px; display:inline-block;'>Aplicar en LinkedIn →</a>\n        </div>\n      </div>`;\n  }).join('');\n\n  return `\n    <!DOCTYPE html>\n    <html>\n      <body style='margin:0; padding:40px 20px; background:#f1f5f9; font-family:-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif;'>\n        <div style='max-width:600px; margin:0 auto;'>\n          <div style='text-align:center; margin-bottom:30px;'>\n            <h1 style='color:#0f172a; margin:0; font-size:26px;'>🎯 Nuevos Matches</h1>\n            <p style='color:#64748b; margin:10px 0 0; font-size:14px;'>Reporte del <b>${ahora}</b></p>\n            <div style=\"height:2px; width:40px; background:#2563eb; margin:20px auto;\"></div>\n          </div>\n          ${rows}\n          <div style='text-align:center; padding:20px; color:#94a3b8; font-size:12px;'>\n            <p>Este es un sistema inteligente de búsqueda — ${ahora}</p>\n          </div>\n        </div>\n      </body>\n    </html>`;\n}\n\nreturn [{ \n  json: { \n    status: 'MATCHES_FOUND', \n    count: matches.length, \n    html: buildHtml(matches),\n    ids: matches.map(m => m.id) // Pasamos los IDs para marcarlos como notificados luego\n  } \n}];\n"
       },
-      "id": "b00e1c8f-d1ae-443c-a52a-7140e45dc219",
+      "id": "fa07f37e-adfa-4cc7-9103-a28821ea27da",
       "name": "Organizar HTML",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        80,
-        480
+        -1472,
+        144
       ]
     },
     {
@@ -590,10 +590,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -1328,
-        560
+        -2816,
+        440
       ],
-      "id": "85789735-b6b9-4a60-8156-25ee9d457fc5",
+      "id": "c7e5c868-d858-4cc7-892d-c24904fe01f0",
       "name": "Configuracion"
     },
     {
@@ -603,7 +603,7 @@
             {
               "id": "e7259aff-abf8-48be-8b29-e721dea65c20",
               "name": "prompt",
-              "value": "=Sos un Senior Technical Recruiter especializado en Data Science, ML e Ingeniería de Datos.\n\n---\n\nPERFIL DEL CANDIDATO:\n- Formación: Ing. en Sistemas + Diplomatura en Inteligencia de Datos\n- Experiencia: ~3 años en datos/ML\n  · ML Developer en empresa de e-commerce líder LATAM (2.5 años): modelos predictivos, Python, Pandas, Pytorch, BigQuery, ETL/EDA, pipelines\n  · Data Engineer Ssr en fintech de seguros (actual): pipelines, SQL, n8n, LLM, Dagster\n- STACK: Python (Pandas), SQL, BigQuery, Dagster, PostgreSQL, Docker, AWS (S3), Git, FastAPI\n- ML: modelado predictivo, tuning, EDA\n- Inglés: B1 (lee docs técnicos, conversacional)\n- Seniority: Ssr (2-3 años exp requeridos)\n\n---\n\nROLES TARGET: \nData Scientist, ML Engineer, Data Engineer con ML/Analytics, MLOps/LLMOps, Analytics Engineer\n\n---\n\nVACANTE:\nTítulo: {{ $json.title }}\nEmpresa: {{ $json.company }}\nUbicación: {{ $json.location }}\nURL: {{ $json.job_url }}\nDescripción: {{ $json.description }}\n\n---\n\nSCORING:\n- 5: Fit total, Python+SQL+Cloud, sin inglés avanzado obligatorio.\n- 4: Buen fit, gap menor salvable.\n- 3: Fit parcial, gaps importantes.\n- 2: Seniority incorrecto o perfil alejado.\n- 1: DESCARTAR → Stack incompatible (C#/Java/.Net/PHP), rol Jr puro, Lead/Staff/VP/Manager, REQUERIMIENTO DE 4 AÑOS O MÁS DE EXPERIENCIA, o inglés fluido excluyente.\n\n---\n\nPENALIZACIONES:\n- Requiere 4 años o más de experiencia → Score 1 (DESCARTE OBLIGATORIO)\n- Lead/Staff/Principal/Manager/VP → Score 1\n- +4 años mínimo excluyente → Score 1\n- Inglés fluido excluyente → -2\n- C#/Java/.Net/PHP como stack principal → Score 1\n- Airflow excluyente (el candidato usa Dagster) → -1\n- Título 'Software Engineer' o 'Backend' a secas (sin mencionar Data/ML) → El score debe ser bajo (1-2), independientemente de que use Python.\n\n---\n\nBONIFICACIONES:\n- Python+SQL+Cloud (+1)\n- Pipelines/ETL/Dagster (+1)\n- ML en producción (+1)\n- Docker/AWS (+0.5)\n- Remoto/Híbrido CABA (+0.5)\n\n---\n\nRESPUESTA (ÚNICAMENTE JSON VÁLIDO, SIN BACKTICKS):\n{\n  \"ai_score\": <1-5>,\n  \"title\": \"<título>\",\n  \"company\": \"<empresa>\",\n  \"job_url\": \"<URL>\",\n  \"summary\": \"<justificación 2-3 oraciones>\",\n  \"fit_highlights\": [\"<fortaleza 1>\", \"<fortaleza 2>\"],\n  \"red_flags\": [\"<gap concreto 1>\", \"<gap concreto 2>\"]\n}\n",
+              "value": "=Sos un Senior Technical Recruiter especializado en Data Science, ML e Ingeniería de Datos.\n\n---\n\nPERFIL DEL CANDIDATO:\n- Formación: Ing. en Sistemas + Diplomatura en Inteligencia de Datos\n- Experiencia: ~3 años en datos/ML\n  · ML Developer en empresa de e-commerce líder LATAM (2.5 años): modelos predictivos, Python, Pandas, Pytorch, BigQuery, ETL/EDA, pipelines\n  · Data Engineer Ssr en fintech de seguros (actual): pipelines, SQL, n8n, LLM, Dagster\n- STACK: Python (Pandas), SQL, BigQuery, Dagster, PostgreSQL, Docker, AWS (S3), Git, FastAPI\n- ML: modelado predictivo, tuning, EDA\n- Inglés: B1 (lee docs técnicos, conversacional)\n- Seniority: Ssr (2-3 años exp requeridos)\n\n---\n\nROLES TARGET: \nData Scientist, ML Engineer, Data Engineer con ML/Analytics, MLOps/LLMOps, Analytics Engineer\n\n---\n\nVACANTE:\nId: {{ $('Desagrupar empleos LLM').item.json.id }}\nTítulo: {{ $('Desagrupar empleos LLM').item.json.title }}\nEmpresa: {{ $('Desagrupar empleos LLM').item.json.company }}\nUbicación: {{ $('Desagrupar empleos LLM').item.json.location }}\nURL: {{ $('Desagrupar empleos LLM').item.json.job_url }}\nDescripción: {{ $('Desagrupar empleos LLM').item.json.description }}\n\n\n---\n\nSCORING:\n- 5: Fit total, Python+SQL+Cloud, sin inglés avanzado obligatorio.\n- 4: Buen fit, gap menor salvable.\n- 3: Fit parcial, gaps importantes.\n- 2: Seniority incorrecto o perfil alejado.\n- 1: DESCARTAR → Stack incompatible (C#/Java/.Net/PHP), rol Jr puro, Lead/Staff/VP/Manager, REQUERIMIENTO DE 4 AÑOS O MÁS DE EXPERIENCIA, o inglés fluido excluyente.\n\n---\n\nPENALIZACIONES:\n- Requiere 4 años o más de experiencia → Score 1 (DESCARTE OBLIGATORIO)\n- Lead/Staff/Principal/Manager/VP → Score 1\n- +4 años mínimo excluyente → Score 1\n- Inglés fluido excluyente → -2\n- C#/Java/.Net/PHP como stack principal → Score 1\n- Airflow excluyente (el candidato usa Dagster) → -1\n- Título 'Software Engineer' o 'Backend' a secas (sin mencionar Data/ML) → El score debe ser bajo (1-2), independientemente de que use Python.\n\n---\n\nBONIFICACIONES:\n- Python+SQL+Cloud (+1)\n- Pipelines/ETL/Dagster (+1)\n- ML en producción (+1)\n- Docker/AWS (+0.5)\n- Remoto/Híbrido CABA (+0.5)\n\n---\n\nRESPUESTA (ÚNICAMENTE JSON VÁLIDO, SIN BACKTICKS):\n{\n  \"id\": {{ $json.id }},\n  \"ai_score\": <1-5>,\n  \"title\": \"<título>\",\n  \"company\": \"<empresa>\",\n  \"job_url\": \"<URL>\",\n  \"summary\": \"<justificación 2-3 oraciones>\",\n  \"fit_highlights\": [\"<fortaleza 1>\", \"<fortaleza 2>\"],\n  \"red_flags\": [\"<gap concreto 1>\", \"<gap concreto 2>\"]\n}\n",
               "type": "string"
             }
           ]
@@ -613,10 +613,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -208,
-        784
+        -1696,
+        588
       ],
-      "id": "a6f59857-6b85-4840-949d-81544ba549a9",
+      "id": "63a4955a-7ea1-4e69-9089-36384f27e8d2",
       "name": "Prompt"
     },
     {
@@ -626,10 +626,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        512,
-        1104
+        -448,
+        660
       ],
-      "id": "3a0d7f39-7f73-4fb9-a87a-08ad2cebc986",
+      "id": "c71c3d84-4de0-4553-9269-d760f720c375",
       "name": "Delay 1 segundo"
     },
     {
@@ -638,13 +638,13 @@
         "query": "SELECT * FROM jobs WHERE processed = false OR (ai_score >= 4 AND notified = false);",
         "options": {}
       },
-      "id": "f42fb4f6-5838-47db-95d6-e4e6fd63f9fe",
+      "id": "c54bcafa-8ec6-4f43-a577-79fdb3eb7506",
       "name": "Recuperar pendientes",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -2224,
-        720
+        -4160,
+        464
       ],
       "credentials": {
         "postgres": {
@@ -659,13 +659,13 @@
         "query": "UPDATE jobs SET notified = true WHERE id IN ({{ $('Organizar HTML').item.json.ids.join(',') }});\n",
         "options": {}
       },
-      "id": "b9625b18-33c3-4ac5-b4cb-ba0057bdde03",
+      "id": "bcddb83a-2288-4cd3-b421-25066d3f21c5",
       "name": "Marcar como notificados",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        816,
-        544
+        -672,
+        196
       ],
       "credentials": {
         "postgres": {
@@ -675,17 +675,164 @@
       }
     },
     {
-      "parameters": {
-        "mode": "chooseBranch"
-      },
-      "id": "957aea96-033a-45d7-aec5-f39ecd3c8770",
+      "parameters": {},
+      "id": "a0f0dada-b295-4d9a-9ebc-29d3cd323470",
       "name": "Unir resultados",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        -1696,
-        912
+        -3712,
+        368
       ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -3936,
+        464
+      ],
+      "id": "20dd27cf-9e68-4297-94ef-294dd8c4f99a",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e1907f0d-ea28-4186-94d7-75d23ddf3095",
+              "leftValue": "={{ $('Loop').item.json.processed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1472,
+        588
+      ],
+      "id": "45055db2-b38a-4dbf-a054-c39db72cf8ef",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b7ed5ebe-1d21-486c-9a3c-2954cda33621",
+              "name": "id",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "c7c9518a-8dcb-498b-b66c-ac51d9b12365",
+              "name": "job_url",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.job_url }}",
+              "type": "string"
+            },
+            {
+              "id": "a90389f2-6cbc-4383-9144-4fe131be4bd8",
+              "name": "title",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "9665bed2-a955-4708-a1c9-f4390dfdbb98",
+              "name": "company",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.company }}",
+              "type": "string"
+            },
+            {
+              "id": "2b71890a-1d1b-4157-bd28-531aef215e3d",
+              "name": "location",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.location }}",
+              "type": "string"
+            },
+            {
+              "id": "350d9584-f3c2-4acd-8a79-af7e9d767b52",
+              "name": "date_posted",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.date_posted }}",
+              "type": "string"
+            },
+            {
+              "id": "c8c570dc-15fd-494f-b331-bec981d78f72",
+              "name": "description",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "205a3394-42fb-4eef-b5fa-2ec9c37564ae",
+              "name": "scraped_at",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.scraped_at }}",
+              "type": "string"
+            },
+            {
+              "id": "45318063-41f6-46d4-a90e-8e652e2b18ba",
+              "name": "ai_score",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.ai_score }}",
+              "type": "number"
+            },
+            {
+              "id": "99f2bc88-48c8-4022-aef4-168b6c2ca651",
+              "name": "ai_summary",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.ai_summary }}",
+              "type": "string"
+            },
+            {
+              "id": "60c1b705-cccc-47ce-a035-eb65794cc672",
+              "name": "processed",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.processed }}",
+              "type": "boolean"
+            },
+            {
+              "id": "6b9263a0-5a45-4f74-8a25-f6c82de51f29",
+              "name": "fit_highlights",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.fit_highlights }}",
+              "type": "string"
+            },
+            {
+              "id": "48ab9a48-5f84-4d82-bb8e-e45e4a50e4bf",
+              "name": "red_flags",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.red_flags }}",
+              "type": "string"
+            },
+            {
+              "id": "720818a9-419b-4499-9a73-f23739c6c3cf",
+              "name": "notified",
+              "value": "={{ $('Desagrupar empleos LLM').item.json.notified }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1184,
+        736
+      ],
+      "id": "74f1ac63-81b3-4f2b-b35d-dea96a9db7b5",
+      "name": "Edit Fields"
     }
   ],
   "connections": {
@@ -693,7 +840,7 @@
       "main": [
         [
           {
-            "node": "Filtrar empleos",
+            "node": "Unir resultados",
             "type": "main",
             "index": 0
           }
@@ -764,9 +911,9 @@
       "main": [
         [
           {
-            "node": "Unir resultados",
+            "node": "Aggregate",
             "type": "main",
-            "index": 1
+            "index": 0
           }
         ]
       ]
@@ -833,7 +980,7 @@
       "main": [
         [
           {
-            "node": "Unir resultados",
+            "node": "Guardar empleos",
             "type": "main",
             "index": 0
           }
@@ -844,7 +991,7 @@
       "main": [
         [
           {
-            "node": "Guardar empleos",
+            "node": "Filtrar empleos",
             "type": "main",
             "index": 0
           }
@@ -946,7 +1093,7 @@
       "main": [
         [
           {
-            "node": "Basic LLM Chain",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -954,6 +1101,46 @@
       ]
     },
     "Delay 1 segundo": {
+      "main": [
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Unir resultados",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
       "main": [
         [
           {
@@ -974,9 +1161,9 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "01282b49-5256-4212-a875-69ee9f100875",
+  "versionId": "b8e64999-1a8e-479f-80b7-24f03d37e430",
   "activeVersionId": null,
-  "versionCounter": 1126,
+  "versionCounter": 1353,
   "triggerCount": 0,
   "tags": [
     {
