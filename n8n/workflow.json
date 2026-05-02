@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-29T04:53:51.419Z",
+  "updatedAt": "2026-05-02T00:40:53.964Z",
   "createdAt": "2026-04-19T23:17:38.999Z",
   "id": "VPo3TTMDssh681uj",
   "name": "Job Seeker",
@@ -9,7 +9,7 @@
   "nodes": [
     {
       "parameters": {
-        "url": "http://scraper:8000/scrape?days_old=3&results=40",
+        "url": "http://scraper:8000/scrape?days_old=4&results=40",
         "options": {}
       },
       "id": "17f0550f-19a2-4f50-b71b-87e2048f3a9e",
@@ -52,8 +52,8 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.4,
       "position": [
-        -1248,
-        336
+        -1184,
+        864
       ]
     },
     {
@@ -64,7 +64,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -1176,
+        -1184,
         560
       ],
       "id": "8a2c8e2f-2cc0-4396-8371-c9058a702092",
@@ -84,8 +84,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -896,
-        440
+        -832,
+        896
       ],
       "id": "94b71284-75c9-46a5-a3bf-9226b7117287",
       "name": "Parsear respuesta"
@@ -242,8 +242,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -672,
-        440
+        -624,
+        928
       ],
       "id": "23b2a460-ee7d-4427-abc3-2baed0da6ca4",
       "name": "Actualizar empleo",
@@ -264,7 +264,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -4008,
+        -4016,
         16
       ]
     },
@@ -278,8 +278,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -2664,
-        168
+        -2672,
+        176
       ]
     },
     {
@@ -368,7 +368,7 @@
       "typeVersion": 2.5,
       "position": [
         -3040,
-        440
+        448
       ],
       "credentials": {
         "postgres": {
@@ -387,7 +387,7 @@
       "typeVersion": 2,
       "position": [
         -2592,
-        440
+        448
       ]
     },
     {
@@ -418,7 +418,7 @@
       "typeVersion": 2.3,
       "position": [
         -2368,
-        440
+        448
       ],
       "id": "6eaed180-de32-4568-8520-aa35b07a1fef",
       "name": "Filtrar si no hay empleos"
@@ -434,7 +434,7 @@
       "typeVersion": 1,
       "position": [
         -3264,
-        440
+        448
       ]
     },
     {
@@ -446,7 +446,7 @@
       "typeVersion": 1,
       "position": [
         -2144,
-        660
+        672
       ],
       "id": "32d9ad58-3b74-4968-b885-16dcedd8e666",
       "name": "Desagrupar empleos LLM"
@@ -461,7 +461,7 @@
       "typeVersion": 3,
       "position": [
         -1920,
-        660
+        672
       ]
     },
     {
@@ -550,7 +550,7 @@
       "typeVersion": 2.2,
       "position": [
         -896,
-        196
+        208
       ],
       "webhookId": "fb15cc09-e696-4eb0-9270-510ce5e2efdd",
       "credentials": {
@@ -591,7 +591,7 @@
       "typeVersion": 3.4,
       "position": [
         -2816,
-        440
+        448
       ],
       "id": "c7e5c868-d858-4cc7-892d-c24904fe01f0",
       "name": "Configuracion"
@@ -614,7 +614,7 @@
       "typeVersion": 3.4,
       "position": [
         -1696,
-        588
+        688
       ],
       "id": "63a4955a-7ea1-4e69-9089-36384f27e8d2",
       "name": "Prompt"
@@ -627,7 +627,7 @@
       "typeVersion": 2,
       "position": [
         -448,
-        660
+        944
       ],
       "id": "c71c3d84-4de0-4553-9269-d760f720c375",
       "name": "Delay 1 segundo"
@@ -665,7 +665,7 @@
       "typeVersion": 2.5,
       "position": [
         -672,
-        196
+        208
       ],
       "credentials": {
         "postgres": {
@@ -728,7 +728,7 @@
       "typeVersion": 2.3,
       "position": [
         -1472,
-        588
+        688
       ],
       "id": "45055db2-b38a-4dbf-a054-c39db72cf8ef",
       "name": "If"
@@ -828,8 +828,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -1184,
-        736
+        -1456,
+        400
       ],
       "id": "74f1ac63-81b3-4f2b-b35d-dea96a9db7b5",
       "name": "Edit Fields"
@@ -1161,9 +1161,9 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "b8e64999-1a8e-479f-80b7-24f03d37e430",
+  "versionId": "10d70618-6f9e-421c-b61d-2e1fa9a76e66",
   "activeVersionId": null,
-  "versionCounter": 1353,
+  "versionCounter": 1363,
   "triggerCount": 0,
   "tags": [
     {
