@@ -19,14 +19,15 @@ ATS_PATTERNS: List[str] = ["site:greenhouse.io", "site:lever.co"]
 # Empresas del sector energético argentino que queremos revisar
 ENERGY_COMPANIES: List[str] = [
     "YPF", "Pampa Energía", "Pan American Energy", "Tecpetrol",
-    "Shell", "Techint", "ExxonMobil", "Chevron", "Total Energies"
+    "Shell", "Techint", "ExxonMobil", "Chevron"
 ]
 
 # Variantes de títulos/queries para búsquedas en empresas de energía
 ENERGY_JOB_TITLES: List[str] = [
-    "Careers Machine Learning", "Data Science AI", "Ingeniero de Datos",
-    "Machine Learning Engineer", "Data Scientist", "AI Engineer", "MLOps"
+    "Machine Learning Engineer", "Data Scientist", "Data Engineer", 
+    "Machine Learning Developer", "AI Engineer", "MLOps", "Python developer"
 ]
+
 
 # Columnas esperadas en los DataFrames devueltos por jobspy
 COLUMNS: List[str] = ['site', 'job_url', 'title', 'company', 'location', 'date_posted', 'description']

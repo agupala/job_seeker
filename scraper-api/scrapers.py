@@ -105,6 +105,20 @@ class JobScraperFactory:
 
 
 def deduplicate_jobs(jobs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Elimina duplicados por `job_url`. Retorna lista única."""
-    unique = {j['job_url']: j for j in jobs}
+    """Elimina duplicados por Título y Empresa (o URL si están vacíos). Retorna lista única."""
+    unique = {}
+    for j in jobs:
+        title = str(j.get('title', '')).strip().lower()
+        company = str(j.get('company', '')).strip().lower()
+        url = str(j.get('job_url', '')).strip()
+        
+        # Si tenemos título y empresa, los usamos como clave
+        if title and company:
+            key = f"{title}_{company}"
+        # Si falta alguno, usamos la URL como clave de respaldo
+        else:
+            key = url
+            
+        if key not in unique:
+            unique[key] = j
     return list(unique.values())
