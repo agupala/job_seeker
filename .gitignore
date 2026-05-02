@@ -48,3 +48,6 @@ perfil_candidato.md
 
 # VS Code
 .vscode/
+
+# n8n files
+*.n8n
