@@ -512,7 +512,7 @@
     },
     {
       "parameters": {
-        "sendTo": "agustinsantiagopalau@gmail.com",
+        "sendTo": "={{ $env.NOTIFICATION_EMAIL }}",
         "subject": "🔍 Job Seeker: sin novedades hoy",
         "message": "={{ (function(){ const f=new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}); return '<html><body style=\"font-family:Arial,sans-serif;padding:32px;background:#f1f5f9\"><div style=\"max-width:500px;margin:0 auto;background:#fff;border-radius:12px;padding:28px\"><h2 style=\"color:#374151\">🔍 Sin matches hoy</h2><p style=\"color:#4b5563\">Workflow ejecutado el <strong>'+f+'</strong>. Ninguna vacante superó score 4/5.</p><p style=\"color:#6b7280;font-size:14px\">Las vacantes fueron guardadas en la base de datos.</p></div></body></html>'; })() }}",
         "options": {
@@ -537,7 +537,7 @@
     },
     {
       "parameters": {
-        "sendTo": "agustinsantiagopalau@gmail.com",
+        "sendTo": "={{ $env.NOTIFICATION_EMAIL }}",
         "subject": "=🎯 Job seeker: {{ $json.count }} match{{ $json.count === 1 ? '' : 'es' }} hoy",
         "message": "={{ $json.html }}",
         "options": {
@@ -1190,7 +1190,7 @@
         "updatedAt": "2026-04-19T23:15:16.268Z",
         "createdAt": "2026-04-19T23:12:20.043Z",
         "id": "E9NqyW9tYTJgqECB",
-        "name": "Agustin Palau <agustinsantiagopalau@gmail.com>",
+        "name": "Job Seeker Project",
         "type": "personal",
         "icon": null,
         "description": null,

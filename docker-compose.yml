@@ -39,6 +39,7 @@ services:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
       - N8N_EDITOR_BASE_URL=http://localhost:5679
+      - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL}
     volumes:
       - n8n_storage:/home/node/.n8n
     depends_on:
