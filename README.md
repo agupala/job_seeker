@@ -8,6 +8,7 @@ Este proyecto es tu centro de comando personal para automatizar la búsqueda de 
 
 - **[n8n](https://n8n.io/)**: Orquestador de flujo de trabajo (Low-code/No-code).
 - **[FastAPI](https://fastapi.tiangolo.com/)**: API en Python para el scraping de vacantes.
+- **[JobSpy](https://github.com/Bunsly/JobSpy)**: Motor de scraping subyacente para múltiples plataformas.
 - **[PostgreSQL](https://www.postgresql.org/)**: Base de datos para persistencia y deduplicación.
 - **[Google Gemini AI](https://deepmind.google/technologies/gemini/)**: Filtro inteligente basado en LLM para evaluar afinidad técnica.
 - **[Docker](https://www.docker.com/)**: Contenerización de todo el ecosistema.
@@ -16,7 +17,7 @@ Este proyecto es tu centro de comando personal para automatizar la búsqueda de 
 
 ## Modelo Gemini (configuración)
 
-- **Modelo configurado:** `gemini-2.5-flash-lite` (vía n8n).
+- **Modelo configurado:** `gemini-1.5-flash` (o superior).
 - **Plan recomendado:** Se recomienda fuertemente utilizar una **API Key de nivel pago (Pay-as-you-go)**. 
   - *Razón:* Los niveles gratuitos suelen tener límites muy estrictos de transacciones por minuto (TPM). Para un scraping de 20-50 vacantes, el nivel gratuito podría bloquearse por "Rate Limit", mientras que el nivel pago procesa todo en segundos.
 
@@ -45,7 +46,6 @@ Este proyecto es tu centro de comando personal para automatizar la búsqueda de 
      - `DB_PASSWORD` — contraseña que usará Postgres internamente.
      - `GEMINI_API_KEY` — clave de acceso para Gemini (obligatoria si usás el filtro IA).
      - `N8N_ENCRYPTION_KEY` — clave para encriptar datos en n8n.
-
 2. **Levantar el Ecosistema**:
 
    ```bash
@@ -56,6 +56,34 @@ Este proyecto es tu centro de comando personal para automatizar la búsqueda de 
    - **n8n**: [http://localhost:5679](http://localhost:5679) (Importa `n8n/workflow.json` al iniciar).
    - **Scraper API**: [http://localhost:8000/docs](http://localhost:8000/docs).
    - **Base de Datos**: Accesible en `localhost:5434` (mapeado al puerto interno `5432`).
+
+---
+
+## ⚙️ Funcionamiento del Ecosistema
+
+El sistema opera en un ciclo de cuatro fases para garantizar calidad y relevancia:
+
+1.  **Ingesta**: El orquestador (n8n) consulta la **Scraper API**.
+2.  **Deduplicación**: Los resultados se cruzan con la base de datos (Postgres) para ignorar vacantes ya procesadas.
+3.  **Análisis IA**: Gemini evalúa la descripción de cada puesto contra el perfil objetivo (Score 1-5).
+4.  **Notificación**: Si el Score es >= 4, se genera un reporte visual y se envía por Gmail.
+
+### 🌐 Endpoints de la API
+
+| Endpoint | Descripción | Parámetros clave |
+| :--- | :--- | :--- |
+| `GET /scrape` | Búsqueda unificada (LinkedIn, Indeed, Google, ATS) | `term`, `location`, `results`, `days_old` |
+| `GET /scrape/energy` | Búsqueda especializada en sector energético ARG | `days_old` |
+
+---
+
+## 🤖 Lógica de Filtro (AI Scoring)
+
+El agente de IA utiliza un sistema de scoring del **1 al 5** basado en criterios técnicos:
+
+- **Score 5 (Match Perfecto)**: Coincidencia total en stack (Python/SQL) y seniority Ssr.
+- **Score 4 (Buen Match)**: Gap técnico menor o requerimiento de inglés manejable.
+- **Score 1 (Descarte)**: Roles de Management (Lead/Staff/Manager), stack incompatible (.NET/Java) o requerimiento de +5 años de experiencia.
 
 ---
 
@@ -104,9 +132,8 @@ Esto creará una carpeta en `/backups` con:
 
 ---
 
-## 💡 Notas de Implementación
-
-- **Deduplicación**: El sistema utiliza la URL de la vacante como clave única para evitar procesar la misma oferta dos veces.
+- **Resiliencia**: El workflow de n8n incluye un nodo de "Recuperar pendientes" que permite re-procesar vacantes que fallaron o quedaron a mitad de camino sin duplicar datos.
+- **Deduplicación**: El sistema utiliza una combinación de Título, Empresa y URL como clave única para evitar procesar la misma oferta dos veces.
 - **Filtro de IA**: El prompt de Gemini está diseñado para ser estricto (priorizando Ssr, Dagster y evitando perfiles Senior/Lead).
 - **Puertos**: Se utiliza el puerto `5679` para n8n y `5434` para Postgres para evitar conflictos con instalaciones estándar.
 
@@ -123,19 +150,30 @@ scraping (`/scraper-api`) usa una combinación de **Strategy** + **Factory**.
 - Factory: una fábrica simple (`JobScraperFactory`) crea instancias concretas según
    el tipo (`'general'`, `'ats'`, `'energy'`).
 
-Diagrama (Mermaid):
+Diagrama de Arquitectura (Mermaid):
 
 ```mermaid
 flowchart TD
-   A[JobScraperFactory] -->|create general| B[General Scraper]
-   A -->|create ats| C[ATS Scraper]
-   A -->|create energy| D[Energy Scraper]
-   subgraph Orquestador
-      O[Scrape Endpoint] --> B
-      O --> C
-      O --> D
-      O --> E[deduplicate_jobs()]
-   end
+    subgraph ScraperAPI [Scraper API - FastAPI]
+        direction TB
+        F[JobScraperFactory] -->|crea| S1[GeneralScraper]
+        F -->|crea| S2[ATSScraper]
+        F -->|crea| S3[EnergyScraper]
+        
+        S1 & S2 & S3 --> D[deduplicate_jobs]
+    end
+
+    subgraph Orchestrator [Orquestación y Análisis]
+        direction TB
+        N[n8n Workflow] -->|GET /scrape| F
+        D -->|JSON| N
+        N -->|Análisis| G[Gemini AI]
+        G -->|Resultados| DB[(PostgreSQL)]
+    end
+
+    subgraph Input [Configuración]
+        P[Prompt de Búsqueda] -.->|alimenta prompt| G
+    end
 ```
 
 Ventajas rápidas:
