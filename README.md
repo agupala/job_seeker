@@ -59,14 +59,32 @@ Este proyecto es tu centro de comando personal para automatizar la búsqueda de 
 
 ---
 
+## 📧 Configuración de Gmail (Notificaciones)
+
+Para que n8n pueda enviar los reportes por correo, debes configurar las credenciales de Google usando **OAuth2**.
+
+### Pasos rápidos en Google Cloud Console:
+
+1. **Crear Proyecto**: Ve a [Google Cloud Console](https://console.cloud.google.com/) y crea un nuevo proyecto.
+2. **Habilitar API**: En "Library", busca y habilita la **Gmail API**.
+3. **OAuth Consent Screen**: Configura la pantalla como "External". **Importante**: Agrega tu dirección de email en la sección de "Test Users".
+4. **Credenciales**: Crea una credencial de tipo **OAuth Client ID** -> **Web Application**.
+5. **Redirect URI**: En n8n, abre el nodo de Gmail, crea una nueva credencial y copia la "OAuth Redirect URL". Pégala en Google Cloud en el campo "Authorized redirect URIs".
+6. **Vincular**: Copia el *Client ID* y *Client Secret* de vuelta a n8n y haz clic en "Sign in with Google".
+
+> [!TIP]
+> Si tienes problemas, consulta la [Documentación oficial de n8n](https://docs.n8n.io/integrations/builtin/credentials/google/) o busca este [Video Tutorial](https://www.youtube.com/results?search_query=n8n+gmail+oauth2+setup).
+
+---
+
 ## ⚙️ Funcionamiento del Ecosistema
 
 El sistema opera en un ciclo de cuatro fases para garantizar calidad y relevancia:
 
-1.  **Ingesta**: El orquestador (n8n) consulta la **Scraper API**.
-2.  **Deduplicación**: Los resultados se cruzan con la base de datos (Postgres) para ignorar vacantes ya procesadas.
-3.  **Análisis IA**: Gemini evalúa la descripción de cada puesto contra el perfil objetivo (Score 1-5).
-4.  **Notificación**: Si el Score es >= 4, se genera un reporte visual y se envía por Gmail.
+1. **Ingesta**: El orquestador (n8n) consulta la **Scraper API**.
+2. **Deduplicación**: Los resultados se cruzan con la base de datos (Postgres) para ignorar vacantes ya procesadas.
+3. **Análisis IA**: Gemini evalúa la descripción de cada puesto contra el perfil objetivo (Score 1-5).
+4. **Notificación**: Si el Score es >= 4, se genera un reporte visual y se envía por Gmail.
 
 ### 🌐 Endpoints de la API
 
